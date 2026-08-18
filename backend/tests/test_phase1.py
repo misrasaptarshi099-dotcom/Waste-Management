@@ -7,7 +7,8 @@ and spatial correctness.
 
 import json
 from pathlib import Path
-from shapely.geometry import shape, Point
+
+from shapely.geometry import shape
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ZONES_PATH = BASE_DIR / "data" / "processed" / "zones.geojson"
@@ -46,7 +47,7 @@ def test_zones_geojson_integrity():
         zone_ids.add(props["zone_id"])
 
     assert len(zone_ids) == 15, "Duplicate zone_ids detected"
-    print(f"[TEST PASS] zones.geojson verified (15 valid ward polygons).")
+    print("[TEST PASS] zones.geojson verified (15 valid ward polygons).")
 
 
 def test_stops_json_integrity():

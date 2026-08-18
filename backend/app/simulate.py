@@ -9,10 +9,10 @@ and cultural event surges (Ganesh Utsav, Diwali, weekly Subzi Mandis).
 """
 
 import json
-import math
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 
@@ -49,8 +49,6 @@ def get_event_multiplier(date: datetime) -> tuple:
     Return (multiplier: float, event_name: str | None) for a given date.
     Checks Indian festivals first, then weekly market days, then weekends.
     """
-    date_str = date.strftime("%Y-%m-%d")
-
     # Check festivals
     for name, info in INDIAN_FESTIVALS.items():
         start = _parse_date(info["start"])
@@ -78,7 +76,7 @@ def compute_density_factor(population_density: float) -> float:
 def simulate_fill_history(
     stops: list,
     n_days: int = 60,
-    start_date: datetime = None,
+    start_date: Optional[datetime] = None,
     seed: int = 42,
 ) -> list:
     """
@@ -100,7 +98,6 @@ def simulate_fill_history(
     # Build zone -> scheduled day mapping from stops
     zone_day_map = {}
     for s in stops:
-        # The day field lives on zones, not stops.  We infer from zone_id order.
         zid = s["zone_id"]
         if zid not in zone_day_map:
             idx = int(zid.split("W")[1]) - 1
@@ -112,26 +109,23 @@ def simulate_fill_history(
         "Thursday": 3, "Friday": 4, "Saturday": 5,
     }
 
-    records = []  # flat list of daily observations
+    records = []
 
     for stop in stops:
         if stop.get("is_depot"):
-            continue  # depots don't accumulate waste
+            continue
 
         sid = stop["stop_id"]
         zid = stop["zone_id"]
-        base_rate = stop.get("baseline_fill_rate", 18.0)  # % per day
+        base_rate = stop.get("baseline_fill_rate", 18.0)
         is_commercial = stop.get("commercial_flag", False)
         capacity_kg = stop.get("bin_capacity_kg", 400)
 
-        # Ward-level factors
-        # Density factor from zone metadata (we stored density in the stops indirectly)
-        density = 13000  # default
-        # Lookup from ward metadata embedded during Phase 1
+        density = 13000
         density_factor = compute_density_factor(density)
         commercial_mult = 1.6 if is_commercial else 1.0
 
-        fill_pct = random.uniform(5.0, 35.0)  # initial random fill
+        fill_pct = random.uniform(5.0, 35.0)
         last_collected_day = -1
 
         scheduled_weekday = day_name_to_int.get(zone_day_map.get(zid, "Monday"), 0)
@@ -140,24 +134,19 @@ def simulate_fill_history(
             current_date = start_date + timedelta(days=day_offset)
             current_weekday = current_date.weekday()
 
-            # Determine event multiplier
             event_mult, event_name = get_event_multiplier(current_date)
 
-            # Was waste collected on the previous day under static schedule?
             collected = False
             if current_weekday == scheduled_weekday:
                 collected = True
 
-            # Poisson waste influx (% fill per day)
             lam = (base_rate / 100.0) * density_factor * commercial_mult * event_mult
             lam = max(lam, 0.01)
-            delta_pct = np.random.poisson(lam * 100) / 100.0 * 100  # scale to percentage
+            delta_pct = np.random.poisson(lam * 100) / 100.0 * 100
 
-            # Clamp delta to reasonable daily influx
             delta_pct = min(delta_pct, 45.0)
 
             if collected:
-                # Collection resets to near-zero
                 fill_pct = random.uniform(2.0, 8.0)
                 days_since_pickup = 0
             else:
@@ -192,22 +181,7 @@ def simulate_fill_history(
 
 
 def build_training_features(records: list) -> list:
-    """
-    Transform raw simulation records into ML-ready feature vectors.
-
-    Features:
-        - days_since_last_pickup (int, 0-7)
-        - day_of_week (int, 0-6)
-        - is_weekend (0/1)
-        - is_festival (0/1)
-        - is_market_day (0/1)
-        - commercial_flag (0/1)
-        - baseline_fill_rate (float)
-        - event_multiplier (float)
-
-    Target:
-        - fill_pct (float, 0-100)
-    """
+    """Transform raw simulation records into ML-ready feature vectors."""
     training_rows = []
     for r in records:
         row = {
@@ -219,7 +193,6 @@ def build_training_features(records: list) -> list:
             "commercial_flag": r["commercial_flag"],
             "baseline_fill_rate": r["baseline_fill_rate"],
             "event_multiplier": r["event_multiplier"],
-            # Target
             "fill_pct": r["fill_pct"],
         }
         training_rows.append(row)
@@ -233,27 +206,23 @@ def run_simulation():
 
     print(f"[INFO] Loaded {len(stops)} stops from {STOPS_PATH}")
 
-    # Run simulation
     records = simulate_fill_history(stops, n_days=60)
     print(f"[INFO] Generated {len(records)} daily fill observations across 60 days")
 
-    # Save full history
     with open(SIMULATION_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(records, f, indent=2)
     print(f"[SUCCESS] Saved fill history to {SIMULATION_OUTPUT_PATH}")
 
-    # Build and save training features
     training = build_training_features(records)
     with open(TRAINING_CSV_PATH, "w", encoding="utf-8") as f:
         json.dump(training, f, indent=2)
     print(f"[SUCCESS] Saved {len(training)} training rows to {TRAINING_CSV_PATH}")
 
-    # Quick stats
     fills = [r["fill_pct"] for r in records]
     print(f"[STATS] Fill % range: {min(fills):.1f} - {max(fills):.1f}")
     print(f"[STATS] Mean fill: {sum(fills)/len(fills):.1f}%")
     overflow_count = sum(1 for f in fills if f >= 90.0)
-    print(f"[STATS] Overflow events (>=90%%): {overflow_count} ({100*overflow_count/len(fills):.1f}%)")
+    print(f"[STATS] Overflow events (>=90%): {overflow_count} ({100*overflow_count/len(fills):.1f}%)")
 
     return records, training
 

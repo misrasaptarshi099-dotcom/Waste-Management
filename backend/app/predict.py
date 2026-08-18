@@ -9,9 +9,9 @@ fill percentages for all stops on any given future date.
 """
 
 import json
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 
@@ -37,6 +37,7 @@ TARGET_COLUMN = "fill_pct"
 # Deterministic rule-based fallback (used when sklearn model unavailable)
 # ---------------------------------------------------------------------------
 
+
 def deterministic_fill_estimate(
     days_since_last: int,
     baseline_rate: float,
@@ -56,16 +57,17 @@ def deterministic_fill_estimate(
 # Model training
 # ---------------------------------------------------------------------------
 
+
 def train_model():
     """
     Train a RandomForestRegressor on the simulated training data.
     Saves the model to data/outputs/fill_model.joblib and prints metrics.
     """
     try:
-        from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
-        from sklearn.model_selection import train_test_split
-        from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
         import joblib
+        from sklearn.ensemble import RandomForestRegressor
+        from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+        from sklearn.model_selection import train_test_split
     except ImportError:
         print("[ERROR] scikit-learn is not installed. Run: pip install scikit-learn")
         print("[FALLBACK] Using deterministic rule-based fill estimator instead.")
@@ -149,20 +151,21 @@ def train_model():
 # Inference: predict fill levels for all stops on a given date
 # ---------------------------------------------------------------------------
 
+
 def load_model():
     """Load the trained model from disk; return None if unavailable."""
     try:
         import joblib
         if MODEL_PATH.exists():
             return joblib.load(MODEL_PATH)
-    except Exception:
+    except (ImportError, OSError, ValueError):
         pass
     return None
 
 
 def predict_stop_fills(
     date_str: str,
-    stops: list = None,
+    stops: Optional[list] = None,
     model=None,
 ) -> list:
     """
@@ -200,13 +203,6 @@ def predict_stop_fills(
         model = load_model()
     use_ml = model is not None
 
-    # Map zone -> scheduled day
-    days_map = {
-        "Monday": 0, "Tuesday": 1, "Wednesday": 2,
-        "Thursday": 3, "Friday": 4, "Saturday": 5,
-    }
-    days_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-
     results = []
     for stop in stops:
         if stop.get("is_depot"):
@@ -221,7 +217,7 @@ def predict_stop_fills(
 
         # Compute days since last pickup (simple: how many days since last scheduled day)
         day_diff = (weekday - sched_day_int) % 7
-        days_since = day_diff if day_diff > 0 else 7  # if today is collection day, show yesterday's accumulation
+        days_since = day_diff if day_diff > 0 else 7
 
         if use_ml:
             feature_vec = np.array([[
@@ -276,15 +272,15 @@ if __name__ == "__main__":
     print("=" * 70)
     print("  PHASE 2B: TRAINING FILL PREDICTION MODEL")
     print("=" * 70)
-    model = train_model()
+    trained_model = train_model()
 
     # Step 2: Run sample inference
-    if model is not None:
+    if trained_model is not None:
         print()
         print("=" * 70)
         print("  SAMPLE INFERENCE: Predicting fills for 2026-08-20 (Thursday)")
         print("=" * 70)
-        predictions = predict_stop_fills("2026-08-20", model=model)
+        predictions = predict_stop_fills("2026-08-20", model=trained_model)
         fills = [p["predicted_fill_pct"] for p in predictions]
         print(f"[INFO] Predicted fills for {len(predictions)} stops")
         print(f"[STATS] Min: {min(fills):.1f}%, Max: {max(fills):.1f}%, Mean: {sum(fills)/len(fills):.1f}%")
