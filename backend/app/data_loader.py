@@ -265,8 +265,9 @@ def calculate_polygon_area_sqkm(geom) -> float:
 def sample_random_points_in_polygon(polygon_geom, n_points: int, seed: int = 42):
     """
     Generate uniform random (lat, lon) points strictly within the given Shapely polygon/multipolygon.
+    Uses a local RNG to avoid polluting the global random state.
     """
-    random.seed(seed)
+    rng = random.Random(seed)
     minx, miny, maxx, maxy = polygon_geom.bounds
     points = []
     attempts = 0
@@ -274,8 +275,8 @@ def sample_random_points_in_polygon(polygon_geom, n_points: int, seed: int = 42)
 
     while len(points) < n_points and attempts < max_attempts:
         attempts += 1
-        rx = random.uniform(minx, maxx)
-        ry = random.uniform(miny, maxy)
+        rx = rng.uniform(minx, maxx)
+        ry = rng.uniform(miny, maxy)
         p = Point(rx, ry)
         if polygon_geom.contains(p):
             points.append((ry, rx))  # (lat, lon)
@@ -284,8 +285,8 @@ def sample_random_points_in_polygon(polygon_geom, n_points: int, seed: int = 42)
     if len(points) < n_points:
         centroid = polygon_geom.centroid
         for _ in range(n_points - len(points)):
-            offset_lat = random.uniform(-0.005, 0.005)
-            offset_lon = random.uniform(-0.005, 0.005)
+            offset_lat = rng.uniform(-0.005, 0.005)
+            offset_lon = rng.uniform(-0.005, 0.005)
             points.append((centroid.y + offset_lat, centroid.x + offset_lon))
 
     return points
@@ -303,17 +304,23 @@ def process_and_generate_datasets():
 
     print(f"[INFO] Processing {len(raw_features)} administrative wards...")
 
+    if len(raw_features) != len(WARD_METADATA):
+        raise ValueError(
+            f"Ward count mismatch: GeoJSON has {len(raw_features)} features "
+            f"but WARD_METADATA has {len(WARD_METADATA)} entries. "
+            f"Cannot safely map wards to metadata."
+        )
+
     normalized_zones = []
     all_stops = []
-    global_stop_counter = 1
 
     for idx, feature in enumerate(raw_features):
         geom = shape(feature["geometry"])
         centroid = geom.centroid
         area_sqkm = calculate_polygon_area_sqkm(geom)
 
-        # Match with ward metadata
-        meta = WARD_METADATA[idx % len(WARD_METADATA)]
+        # Direct index access (validated above)
+        meta = WARD_METADATA[idx]
         zone_id = meta["id"]
         ward_name = meta["name"]
         density = meta["density"]
@@ -391,7 +398,6 @@ def process_and_generate_datasets():
                 "address": f"Near {landmark_name}, {ward_name}, Pune - 4110{idx+1:02d}"
             }
             all_stops.append(stop_record)
-            global_stop_counter += 1
 
     # Save zones.geojson
     zones_geojson = {

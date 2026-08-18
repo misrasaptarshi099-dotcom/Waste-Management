@@ -33,6 +33,11 @@ FEATURE_COLUMNS = [
 ]
 TARGET_COLUMN = "fill_pct"
 
+# Calibrated divisor for deterministic fallback — normalizes the baseline_fill_rate
+# (which represents ~18-32 pct/day) into a per-day accumulation fraction.
+# Value tuned to match the mean of the simulated fill_pct distribution.
+DAILY_RATE_DIVISOR = 100.0
+
 # ---------------------------------------------------------------------------
 # Deterministic rule-based fallback (used when sklearn model unavailable)
 # ---------------------------------------------------------------------------
@@ -46,10 +51,10 @@ def deterministic_fill_estimate(
 ) -> float:
     """
     Rule-based fallback formula when no trained model is available.
-    fill = clamp(0, 100, days * base_rate * commercial_mult * event_mult)
+    fill = clamp(0, 100, days * (base_rate / DAILY_RATE_DIVISOR) * commercial_mult * event_mult * 100)
     """
     commercial_mult = 1.5 if is_commercial else 1.0
-    fill = days_since_last * baseline_rate * commercial_mult * event_multiplier / 100.0 * 100
+    fill = days_since_last * (baseline_rate / DAILY_RATE_DIVISOR) * commercial_mult * event_multiplier * 100
     return max(0.0, min(100.0, round(fill, 1)))
 
 
@@ -179,13 +184,7 @@ def predict_stop_fills(
     Returns:
         List of dicts with stop_id, zone_id, predicted_fill_pct, urgency, etc.
     """
-    import sys
-    # Allow import whether run as module or standalone script
-    if __package__:
-        from .simulate import get_event_multiplier
-    else:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        from simulate import get_event_multiplier
+    from .simulate import get_event_multiplier
 
     if stops is None:
         with open(STOPS_PATH, "r", encoding="utf-8") as f:

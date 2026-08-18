@@ -214,6 +214,36 @@ class TestCVRPIntegration:
         assert result["stops_served"] > 0
         assert result["solver"] == "greedy-nn-fallback"
 
+    def test_greedy_fallback_capacity_overflow(self):
+        """When total demand exceeds fleet capacity, some stops should be unassigned."""
+        from app.utils.distance import build_distance_matrix
+        from app.optimize import _greedy_fallback
+
+        # 5 stops each demanding 3000 kg = 15000 kg total
+        # Fleet: 2 vehicles × 4000 kg = 8000 kg capacity
+        # So at least some stops must be unassigned
+        stops = [
+            {"stop_id": f"S{i}", "lat": 18.52 + i * 0.01, "lon": 73.85 + i * 0.01,
+             "name": f"Stop {i}", "predicted_fill_pct": 95,
+             "bin_capacity_kg": 3000}
+            for i in range(1, 6)
+        ]
+        depot = (18.52, 73.85)
+        coords = [depot] + [(s["lat"], s["lon"]) for s in stops]
+        dm = build_distance_matrix(coords)
+        demands = [0] + [3000] * 5  # 15000 kg total demand
+
+        result = _greedy_fallback(stops, dm, demands, 2, 4000)
+        assert result["solver"] == "greedy-nn-fallback"
+        # With 8000 kg capacity, can only serve 2 stops (2×4000=8000, each stop=3000)
+        assert result["stops_served"] < 5, "Some stops should be unassigned due to capacity"
+        assert result["stops_served"] >= 2, "Should serve at least 2 stops"
+
+    @pytest.mark.skipif(
+        not Path(__file__).resolve().parent.parent.parent.joinpath(
+            "data", "processed", "stops.json").exists(),
+        reason="stops.json not generated"
+    )
     def test_zone_optimization_returns_valid_structure(self):
         """
         run_zone_optimization should return a dict with required keys.
@@ -227,5 +257,43 @@ class TestCVRPIntegration:
         assert result["zone_id"] == "PUNE_W01"
         assert "static_route" in result
         assert "savings" in result
+        assert "unserved_stops_count" in result
         assert result["static_route"]["total_distance_km"] > 0
         assert result["savings"]["static_distance_km"] > 0
+        assert result["static_route"]["mode"] == "uncapacitated-single-tour"
+
+
+class TestDeterministicFallback:
+    """Test the deterministic rule-based fill prediction fallback."""
+
+    def test_fallback_with_model_none(self):
+        """predict_stop_fills with model=None should use deterministic fallback."""
+        from app.predict import deterministic_fill_estimate, DAILY_RATE_DIVISOR
+
+        # Typical non-commercial stop: 3 days since pickup, 18% base rate, no event
+        fill = deterministic_fill_estimate(
+            days_since_last=3, baseline_rate=18.0,
+            is_commercial=False, event_multiplier=1.0,
+        )
+        assert 0.0 <= fill <= 100.0
+        # 3 * (18/100) * 1.0 * 1.0 * 100 = 54.0
+        assert fill == 54.0
+
+    def test_fallback_clamps_to_100(self):
+        """Extreme inputs should clamp to 100%."""
+        from app.predict import deterministic_fill_estimate
+
+        fill = deterministic_fill_estimate(
+            days_since_last=7, baseline_rate=32.0,
+            is_commercial=True, event_multiplier=3.5,
+        )
+        assert fill == 100.0
+
+    def test_fallback_commercial_multiplier(self):
+        """Commercial stops should accumulate faster (1.5× multiplier)."""
+        from app.predict import deterministic_fill_estimate
+
+        fill_regular = deterministic_fill_estimate(2, 20.0, False, 1.0)
+        fill_commercial = deterministic_fill_estimate(2, 20.0, True, 1.0)
+        assert fill_commercial > fill_regular
+

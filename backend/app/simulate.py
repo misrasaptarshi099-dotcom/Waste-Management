@@ -44,17 +44,22 @@ def _parse_date(s: str) -> datetime:
     return datetime.strptime(s, "%Y-%m-%d")
 
 
+# Pre-parse festival date ranges once at module load time
+_PARSED_FESTIVALS = [
+    (_parse_date(info["start"]), _parse_date(info["end"]), info["multiplier"], name)
+    for name, info in INDIAN_FESTIVALS.items()
+]
+
+
 def get_event_multiplier(date: datetime) -> tuple:
     """
     Return (multiplier: float, event_name: str | None) for a given date.
     Checks Indian festivals first, then weekly market days, then weekends.
     """
-    # Check festivals
-    for name, info in INDIAN_FESTIVALS.items():
-        start = _parse_date(info["start"])
-        end = _parse_date(info["end"])
+    # Check festivals (uses pre-parsed date ranges)
+    for start, end, multiplier, name in _PARSED_FESTIVALS:
         if start <= date <= end:
-            return info["multiplier"], name
+            return multiplier, name
 
     # Check weekly market days (Subzi Mandi / Haat)
     if date.weekday() in WEEKLY_MARKET_DAYS:
@@ -78,6 +83,7 @@ def simulate_fill_history(
     n_days: int = 60,
     start_date: Optional[datetime] = None,
     seed: int = 42,
+    density_map: Optional[dict] = None,
 ) -> list:
     """
     Simulate n_days of waste accumulation for every stop.
@@ -121,7 +127,9 @@ def simulate_fill_history(
         is_commercial = stop.get("commercial_flag", False)
         capacity_kg = stop.get("bin_capacity_kg", 400)
 
-        density = 13000
+        density = 13000  # fallback median Pune density
+        if density_map and zid in density_map:
+            density = density_map[zid]
         density_factor = compute_density_factor(density)
         commercial_mult = 1.6 if is_commercial else 1.0
 
@@ -142,7 +150,7 @@ def simulate_fill_history(
 
             lam = (base_rate / 100.0) * density_factor * commercial_mult * event_mult
             lam = max(lam, 0.01)
-            delta_pct = np.random.poisson(lam * 100) / 100.0 * 100
+            delta_pct = float(np.random.poisson(int(lam * 100)))
 
             delta_pct = min(delta_pct, 45.0)
 
@@ -206,7 +214,11 @@ def run_simulation():
 
     print(f"[INFO] Loaded {len(stops)} stops from {STOPS_PATH}")
 
-    records = simulate_fill_history(stops, n_days=60)
+    # Build zone -> density map from WARD_METADATA in data_loader
+    from .data_loader import WARD_METADATA
+    density_map = {m["id"]: m["density"] for m in WARD_METADATA}
+
+    records = simulate_fill_history(stops, n_days=60, density_map=density_map)
     print(f"[INFO] Generated {len(records)} daily fill observations across 60 days")
 
     with open(SIMULATION_OUTPUT_PATH, "w", encoding="utf-8") as f:

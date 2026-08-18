@@ -66,15 +66,19 @@ def solve_static_route(
     """
     Build a static baseline route visiting ALL stops in nearest-neighbour order.
 
-    This represents the traditional fixed-schedule approach where trucks
-    visit every stop regardless of fill level.
+    This is an uncapacitated single-tour baseline representing the traditional
+    fixed-schedule approach where trucks visit every stop regardless of fill
+    level. It does NOT model multi-vehicle capacity splits, so its distance
+    is NOT directly comparable to the capacity-constrained CVRP result.
+    The savings delta labels reflect this limitation.
 
     Returns:
-        dict with route_indices, ordered_stops, total_distance_km.
+        dict with route_indices, ordered_stops, total_distance_km, mode.
     """
     n = len(distance_matrix)
     if n <= 1:
-        return {"route_indices": [0], "ordered_stops": [], "total_distance_km": 0.0}
+        return {"route_indices": [0], "ordered_stops": [], "total_distance_km": 0.0,
+                "mode": "uncapacitated-single-tour"}
 
     visited = [False] * n
     visited[0] = True
@@ -104,6 +108,7 @@ def solve_static_route(
         "route_indices": route,
         "ordered_stops": [stop_list[i - 1] for i in route[1:-1]],
         "total_distance_km": round(total_km, 2),
+        "mode": "uncapacitated-single-tour",
     }
 
 
@@ -363,6 +368,7 @@ def run_zone_optimization(
     zone_id: str,
     date_str: str,
     predicted_fills: Optional[list] = None,
+    all_stops: Optional[list] = None,
 ) -> dict:
     """
     Run full static-vs-dynamic route comparison for a single zone.
@@ -372,6 +378,7 @@ def run_zone_optimization(
         date_str: "YYYY-MM-DD" format date.
         predicted_fills: Pre-computed fill predictions (from predict.py).
                          If None, will call predict_stop_fills().
+        all_stops: Pre-loaded stops list. If None, loads from disk.
 
     Returns:
         dict containing static_route, dynamic_route, savings, metadata.
@@ -379,7 +386,8 @@ def run_zone_optimization(
     from .utils.distance import build_distance_matrix
 
     # Load stops for this zone
-    all_stops = load_stops()
+    if all_stops is None:
+        all_stops = load_stops()
     zone_stops = [s for s in all_stops if s["zone_id"] == zone_id and not s.get("is_depot")]
     depot = next((s for s in all_stops if s["zone_id"] == zone_id and s.get("is_depot")), None)
 
@@ -400,11 +408,7 @@ def run_zone_optimization(
 
     # Get predicted fills
     if predicted_fills is None:
-        if __package__:
-            from .predict import predict_stop_fills
-        else:
-            sys.path.insert(0, str(Path(__file__).resolve().parent))
-            from predict import predict_stop_fills
+        from .predict import predict_stop_fills
         predicted_fills = predict_stop_fills(date_str)
 
     # Map fill predictions to zone stops
@@ -464,14 +468,21 @@ def run_zone_optimization(
         depot_coords, active_stops, dynamic_dm, demands,
     )
 
-    # Count overflows served in dynamic route
+    # Derive served stop IDs from actual dynamic routes
+    served_stop_ids = set()
+    for route_info in dynamic_result.get("routes", []):
+        for s in route_info.get("stops", []):
+            served_stop_ids.add(s["stop_id"])
+
+    # Count overflow bins NOT served by the dynamic route
     dynamic_overflow_missed = sum(
         1 for s in zone_stops
         if s["predicted_fill_pct"] >= OVERFLOW_THRESHOLD_PCT
-        and s["stop_id"] not in {
-            a["stop_id"] for a in active_stops
-        }
+        and s["stop_id"] not in served_stop_ids
     )
+
+    # Count total unserved stops (dispatched but not in any route)
+    unserved_stops_count = len(active_stops) - len(served_stop_ids)
 
     savings = compute_savings_deltas(
         static_result["total_distance_km"],
@@ -487,6 +498,7 @@ def run_zone_optimization(
         "date": date_str,
         "total_zone_stops": len(zone_stops),
         "active_stops_count": len(active_stops),
+        "unserved_stops_count": unserved_stops_count,
         "static_route": static_result,
         "dynamic_route": dynamic_result,
         "savings": savings,
@@ -507,28 +519,26 @@ def run_full_city_optimization(date_str: str) -> dict:
     Returns:
         dict with per-zone results and city-wide aggregated metrics.
     """
-    if __package__:
-        from .predict import predict_stop_fills
-    else:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        from predict import predict_stop_fills
+    from .predict import predict_stop_fills
 
     predicted_fills = predict_stop_fills(date_str)
 
     zones = load_zones()
+    all_stops = load_stops()  # Load once, pass to all zone optimizations
     zone_results = {}
     city_totals = {
         "static_distance_km": 0.0,
         "dynamic_distance_km": 0.0,
         "total_stops": 0,
         "active_stops": 0,
+        "unserved_stops": 0,
         "overflow_static": 0,
         "overflow_dynamic_missed": 0,
     }
 
     for zone_id in sorted(zones.keys()):
         print(f"[OPTIMIZE] Solving CVRP for {zone_id} ({zones[zone_id]['name']})...")
-        result = run_zone_optimization(zone_id, date_str, predicted_fills)
+        result = run_zone_optimization(zone_id, date_str, predicted_fills, all_stops)
         zone_results[zone_id] = result
 
         if "savings" in result:
@@ -537,6 +547,7 @@ def run_full_city_optimization(date_str: str) -> dict:
             city_totals["dynamic_distance_km"] += s["dynamic_distance_km"]
             city_totals["total_stops"] += s["static_stops"]
             city_totals["active_stops"] += s["dynamic_stops"]
+            city_totals["unserved_stops"] += result.get("unserved_stops_count", 0)
             city_totals["overflow_static"] += s["overflow_bins_static"]
             city_totals["overflow_dynamic_missed"] += s["overflow_bins_dynamic"]
 
