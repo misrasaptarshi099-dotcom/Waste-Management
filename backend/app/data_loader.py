@@ -7,11 +7,11 @@ and performs Shapely point-in-polygon sampling to generate realistic stops.
 
 import json
 import math
-import os
 import random
 import urllib.request
 from pathlib import Path
-from shapely.geometry import shape, Point, Polygon, MultiPolygon
+
+from shapely.geometry import Point, shape
 
 # Raw DataMeet GeoJSON URL for Pune Admin Wards
 PUNE_GEOJSON_URL = (
