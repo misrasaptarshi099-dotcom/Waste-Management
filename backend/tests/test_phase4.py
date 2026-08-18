@@ -186,6 +186,24 @@ class TestCitizenLookupEndpoint:
         assert "next_pickup_eta" in sched
 
     @pytest.mark.skipif(not ZONES_PATH.exists(), reason="zones.geojson not generated")
+    def test_citizen_lookup_highest_fill_stop(self):
+        response = client.get("/api/citizen/lookup", params={"zone_id": "PUNE_W01"})
+        data = response.json()
+        sched = data["schedule"]
+        # Should have highest_fill_stop (renamed from nearest_stop)
+        assert "highest_fill_stop" in sched
+        if sched["highest_fill_stop"] is not None:
+            assert "stop_id" in sched["highest_fill_stop"]
+            assert "predicted_fill_pct" in sched["highest_fill_stop"]
+        # zone_fill_summary should be a typed object, not a raw dict
+        if sched["zone_fill_summary"] is not None:
+            summary = sched["zone_fill_summary"]
+            assert "total_stops" in summary
+            assert "avg_fill_pct" in summary
+            assert "overflow_risk_count" in summary
+            assert "critical_count" in summary
+
+    @pytest.mark.skipif(not ZONES_PATH.exists(), reason="zones.geojson not generated")
     def test_citizen_lookup_waste_streams(self):
         response = client.get("/api/citizen/lookup", params={"zone_id": "PUNE_W01"})
         data = response.json()

@@ -179,6 +179,29 @@ class CitySavingsResponse(BaseModel):
 # Citizen lookup
 # ---------------------------------------------------------------------------
 
+class ZoneFillSummary(BaseModel):
+    """Aggregated fill statistics for a ward zone."""
+    total_stops: int
+    avg_fill_pct: float
+    overflow_risk_count: int
+    critical_count: int
+
+
+class WasteStream(BaseModel):
+    """SBM-U 2.0 waste segregation category."""
+    type: str
+    bin_color: str
+    examples: str
+
+
+_DEFAULT_WASTE_STREAMS: list[WasteStream] = [
+    WasteStream(type="Wet / Organic", bin_color="Green", examples="Kitchen scraps, fruit peels, flowers"),
+    WasteStream(type="Dry / Recyclable", bin_color="Blue", examples="Paper, plastic, metal, glass"),
+    WasteStream(type="Sanitary / Reject", bin_color="Red", examples="Diapers, sanitary pads, masks"),
+    WasteStream(type="E-Waste / Hazardous", bin_color="Grey", examples="Batteries, bulbs, old phones"),
+]
+
+
 class CitizenSchedule(BaseModel):
     """Schedule information for a citizen's zone."""
     zone_id: str
@@ -187,20 +210,15 @@ class CitizenSchedule(BaseModel):
     cycle: str
     depot_name: str
     next_pickup_eta: Optional[str] = None
-    nearest_stop: Optional[StopModel] = None
-    zone_fill_summary: Optional[dict] = None
+    highest_fill_stop: Optional[StopModel] = None
+    zone_fill_summary: Optional[ZoneFillSummary] = None
 
 
 class CitizenLookupResponse(BaseModel):
     """Response for /api/citizen/lookup."""
     zone_id: str
     schedule: CitizenSchedule
-    waste_streams: list[dict] = [
-        {"type": "Wet / Organic", "bin_color": "Green", "examples": "Kitchen scraps, fruit peels, flowers"},
-        {"type": "Dry / Recyclable", "bin_color": "Blue", "examples": "Paper, plastic, metal, glass"},
-        {"type": "Sanitary / Reject", "bin_color": "Red", "examples": "Diapers, sanitary pads, masks"},
-        {"type": "E-Waste / Hazardous", "bin_color": "Grey", "examples": "Batteries, bulbs, old phones"},
-    ]
+    waste_streams: list[WasteStream] = _DEFAULT_WASTE_STREAMS
 
 
 # ---------------------------------------------------------------------------

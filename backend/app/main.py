@@ -30,6 +30,7 @@ from .schemas import (
     CitySavingsResponse,
     CitizenLookupResponse,
     CitizenSchedule,
+    ZoneFillSummary,
 )
 
 # ---------------------------------------------------------------------------
@@ -64,7 +65,7 @@ cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -148,11 +149,11 @@ async def health_check():
 # GET /api/zones
 # ---------------------------------------------------------------------------
 
-@app.get("/api/zones", tags=["Zones"])
+@app.get("/api/zones", response_model=ZonesResponse, tags=["Zones"])
 async def get_zones():
     """Return all 15 PMC ward boundary polygons as GeoJSON."""
     zones_data = _load_zones()
-    return JSONResponse(content=zones_data)
+    return zones_data
 
 
 # ---------------------------------------------------------------------------
@@ -290,7 +291,7 @@ async def citizen_lookup(
 
     # Build fill summary
     fill_summary = None
-    nearest_stop_data = None
+    highest_fill_stop_data = None
     if zone_stops:
         from .predict import predict_stop_fills, load_model
 
@@ -301,15 +302,15 @@ async def citizen_lookup(
 
         if zone_preds:
             fills = [p["predicted_fill_pct"] for p in zone_preds]
-            fill_summary = {
-                "total_stops": len(zone_preds),
-                "avg_fill_pct": round(sum(fills) / len(fills), 1),
-                "overflow_risk_count": sum(1 for f in fills if f >= 80.0),
-                "critical_count": sum(1 for f in fills if f >= 85.0),
-            }
-            # Pick the most critical stop as "nearest" example
+            fill_summary = ZoneFillSummary(
+                total_stops=len(zone_preds),
+                avg_fill_pct=round(sum(fills) / len(fills), 1),
+                overflow_risk_count=sum(1 for f in fills if f >= 80.0),
+                critical_count=sum(1 for f in fills if f >= 85.0),
+            )
+            # Pick the highest-fill stop to surface to citizens
             zone_preds.sort(key=lambda p: p["predicted_fill_pct"], reverse=True)
-            nearest_stop_data = StopModel(**zone_preds[0])
+            highest_fill_stop_data = StopModel(**zone_preds[0])
 
     schedule = CitizenSchedule(
         zone_id=zone_id,
@@ -318,7 +319,7 @@ async def citizen_lookup(
         cycle=zone_props["cycle"],
         depot_name=zone_props["depot_name"],
         next_pickup_eta=f"Next {zone_props['day']}, Morning 6:00-9:00 AM",
-        nearest_stop=nearest_stop_data,
+        highest_fill_stop=highest_fill_stop_data,
         zone_fill_summary=fill_summary,
     )
 
