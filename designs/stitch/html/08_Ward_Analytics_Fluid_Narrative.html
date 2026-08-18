@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ward Analytics &amp; Insights - SwachhRoute AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&amp;family=Noto+Serif:wght@400;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "background": "#fff8f6",
+                "on-error-container": "#93000a",
+                "inverse-surface": "#352f2d",
+                "on-secondary-fixed-variant": "#2c4d3d",
+                "tertiary": "#006858",
+                "on-primary-container": "#fffbff",
+                "on-primary": "#ffffff",
+                "on-surface-variant": "#56423e",
+                "on-background": "#201a18",
+                "surface": "#fff8f6",
+                "on-tertiary-container": "#f4fffa",
+                "on-tertiary": "#ffffff",
+                "surface-container-low": "#fdf1ed",
+                "secondary-container": "#c3e8d2",
+                "on-secondary-container": "#486a58",
+                "primary-fixed-dim": "#ffb4a5",
+                "background-cream": "#FDFBF7",
+                "secondary-fixed": "#c6ebd5",
+                "on-tertiary-fixed-variant": "#005144",
+                "surface-bright": "#fff8f6",
+                "inverse-on-surface": "#faeeeb",
+                "outline": "#89726d",
+                "surface-dim": "#e3d8d4",
+                "secondary": "#446554",
+                "muted-taupe": "#8B7E76",
+                "tertiary-fixed-dim": "#6ed9c1",
+                "inverse-primary": "#ffb4a5",
+                "tertiary-container": "#008470",
+                "on-error": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed-variant": "#7e2b1c",
+                "error": "#ba1a1a",
+                "on-tertiary-fixed": "#00201a",
+                "surface-container-high": "#f2e6e2",
+                "primary-fixed": "#ffdad3",
+                "surface-variant": "#ece0dd",
+                "tertiary-fixed": "#8bf6dc",
+                "secondary-fixed-dim": "#aacfba",
+                "outline-variant": "#dcc0bb",
+                "on-secondary-fixed": "#002114",
+                "surface-container": "#f7ebe8",
+                "surface-container-highest": "#ece0dd",
+                "surface-tint": "#9d4231",
+                "on-surface": "#201a18",
+                "surface-container-lowest": "#ffffff",
+                "primary": "#9a402f",
+                "surface-sand": "#F5ECE3",
+                "error-container": "#ffdad6",
+                "on-primary-fixed": "#3f0300",
+                "primary-container": "#b95745"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px",
+                "organic-1": "30% 70% 70% 30% / 30% 30% 70% 70%",
+                "organic-2": "60% 40% 30% 70% / 60% 30% 70% 40%",
+                "organic-3": "40% 60% 70% 30% / 40% 50% 60% 50%"
+        },
+        "spacing": {
+                "page-margin": "5vw",
+                "interaction-radius": "24px",
+                "gutter": "2rem",
+                "section-gap": "8rem"
+        },
+        "fontFamily": {
+                "button": [
+                        "dmSans"
+                ],
+                "display-xl": [
+                        "notoSerif"
+                ],
+                "body-lg": [
+                        "dmSans"
+                ],
+                "headline-lg-mobile": [
+                        "notoSerif"
+                ],
+                "headline-lg": [
+                        "notoSerif"
+                ],
+                "display-lg": [
+                        "notoSerif"
+                ],
+                "headline-md": [
+                        "notoSerif"
+                ],
+                "label-md": [
+                        "dmSans"
+                ],
+                "body-md": [
+                        "dmSans"
+                ],
+                "metrics": [
+                        "JetBrains Mono"
+                ]
+        },
+        "fontSize": {
+                "button": [
+                        "16px",
+                        {
+                                "lineHeight": "100%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "display-xl": [
+                        "120px",
+                        {
+                                "lineHeight": "110%",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display-lg": [
+                        "80px",
+                        {
+                                "lineHeight": "110%",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "32px",
+                        {
+                                "lineHeight": "130%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "100%",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
+  .magnetic {
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .organic-clip {
+    clip-path: path('M10 80 C 40 10, 65 10, 95 80 S 150 150, 80 150 S -20 150, 10 80');
+  }
+</style>
+</head>
+<body class="bg-background-cream text-on-background min-h-screen font-body-md overflow-x-hidden pb-32">
+<!-- Top App Bar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-page-margin py-8 fixed top-0 z-50 bg-transparent transition-opacity duration-500 hover:opacity-70">
+<div class="font-headline-md text-headline-md text-on-surface">Fluid Narrative</div>
+<div class="flex gap-8 items-center">
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">Journal</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">Archive</a>
+<a class="text-primary font-bold font-label-md text-label-md" href="#">Studio</a>
+<a class="text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">search</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">account_circle</span>
+</div>
+</div>
+</header>
+<main class="pt-32 px-page-margin max-w-7xl mx-auto flex flex-col md:flex-row gap-gutter">
+<!-- Left Column: Editorial Sticky -->
+<div class="md:w-5/12 flex flex-col gap-12 md:sticky md:top-32 self-start">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-6 leading-tight">Ward<br/>Performance</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Real-time insights and operational metrics across municipal zones.</p>
+</div>
+<!-- Hotspot Alerts Sidebar -->
+<div class="bg-surface-sand rounded-[2rem] p-8 flex flex-col gap-6 backdrop-blur-md bg-opacity-80 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-transparent to-surface-variant opacity-30"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface relative z-10 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">warning</span>
+        Hotspot Alerts
+      </h3>
+<div class="flex flex-col gap-4 relative z-10">
+<div class="flex items-start gap-4 p-4 rounded-xl bg-background-cream hover:bg-surface-container transition-colors cursor-pointer group/alert">
+<div class="w-2 h-2 rounded-full bg-primary mt-2 group-hover/alert:scale-150 transition-transform"></div>
+<div>
+<h4 class="font-button text-button text-on-surface mb-1">FC Road Corridor - Critical</h4>
+<p class="font-body-md text-sm text-on-surface-variant">Overflow reported at secondary collection point.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-xl bg-background-cream hover:bg-surface-container transition-colors cursor-pointer group/alert">
+<div class="w-2 h-2 rounded-full bg-muted-taupe mt-2 group-hover/alert:scale-150 transition-transform"></div>
+<div>
+<h4 class="font-button text-button text-on-surface mb-1">Kalyani Nagar - Moderate</h4>
+<p class="font-body-md text-sm text-on-surface-variant">Slight delay in vehicle dispatch observed.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Scrolling Narrative -->
+<div class="md:w-7/12 flex flex-col gap-16">
+<!-- Ward KPI Cards Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-sand p-6 flex flex-col gap-4 rounded-organic-1 hover:rounded-organic-2 transition-all duration-800 magnetic relative overflow-hidden group shadow-sm backdrop-blur-md bg-opacity-90">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-variant/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-800"></div>
+<div class="flex justify-between items-center relative z-10">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Ward 03</span>
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+<div class="relative z-10">
+<div class="font-metrics text-4xl text-on-surface mb-1 font-medium">92%</div>
+<div class="font-body-md text-sm text-on-surface-variant">Collection Efficiency</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-sand p-6 flex flex-col gap-4 rounded-organic-2 hover:rounded-organic-3 transition-all duration-800 magnetic relative overflow-hidden group shadow-sm backdrop-blur-md bg-opacity-90">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-variant/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-800"></div>
+<div class="flex justify-between items-center relative z-10">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Ward 04</span>
+<span class="material-symbols-outlined text-muted-taupe">trending_flat</span>
+</div>
+<div class="relative z-10">
+<div class="font-metrics text-4xl text-on-surface mb-1 font-medium">78%</div>
+<div class="font-body-md text-sm text-on-surface-variant">Collection Efficiency</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-sand p-6 flex flex-col gap-4 rounded-organic-3 hover:rounded-organic-1 transition-all duration-800 magnetic relative overflow-hidden group shadow-sm backdrop-blur-md bg-opacity-90">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-variant/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-800"></div>
+<div class="flex justify-between items-center relative z-10">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Ward 01</span>
+<span class="material-symbols-outlined text-primary">trending_down</span>
+</div>
+<div class="relative z-10">
+<div class="font-metrics text-4xl text-on-surface mb-1 font-medium">65%</div>
+<div class="font-body-md text-sm text-on-surface-variant">Collection Efficiency</div>
+</div>
+</div>
+</div>
+<!-- Chart Area -->
+<div class="flex flex-col gap-6">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Daily Waste Tonnage</h2>
+<div class="w-full h-80 bg-surface-sand rounded-[2rem] relative overflow-hidden p-6 backdrop-blur-md bg-opacity-80">
+<!-- Decorative subtle background for chart area -->
+<div class="absolute inset-0 bg-gradient-to-br from-background-cream/40 to-transparent"></div>
+<!-- Mock Area Chart using CSS -->
+<div class="absolute bottom-0 left-0 w-full h-2/3 flex items-end px-6 opacity-80">
+<div class="w-full h-full relative">
+<!-- Baseline (Dashed) -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="text-muted-taupe opacity-50" d="M0 80 Q 25 70, 50 75 T 100 60" fill="none" stroke="currentColor" stroke-dasharray="4" stroke-width="1"></path>
+</svg>
+<!-- Actual (Filled Area) -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="text-primary-fixed-dim opacity-30" d="M0 100 L 0 90 Q 20 80, 40 60 T 70 50 T 100 30 L 100 100 Z" fill="currentColor"></path>
+<path class="text-primary" d="M0 90 Q 20 80, 40 60 T 70 50 T 100 30" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="relative z-10 flex justify-between w-full font-label-md text-label-md text-on-surface-variant uppercase tracking-wide">
+<span>Actual</span>
+<span>Baseline</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Pill (Shared Component) -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-center pb-8 md:hidden">
+<div class="bg-surface-sand/80 backdrop-blur-xl shadow-sm rounded-full mb-8 mx-auto w-fit flex items-center p-2 gap-2 hover:scale-105 transition-transform duration-800 magnetic">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors">auto_stories</span>
+<span class="font-label-md text-[10px] text-on-surface-variant group-hover:text-primary transition-colors">Journal</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors">grid_view</span>
+<span class="font-label-md text-[10px] text-on-surface-variant group-hover:text-primary transition-colors">Archive</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 shadow-sm" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">brush</span>
+<span class="font-label-md text-[10px]">Studio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 group" href="#">
+<span class="material-symbols-outlined mb-1 group-hover:text-primary transition-colors">mail</span>
+<span class="font-label-md text-[10px] text-on-surface-variant group-hover:text-primary transition-colors">Contact</span>
+</a>
+</div>
+</nav>
+<script>
+  // Simple magnetic interaction effect
+  document.querySelectorAll('.magnetic').forEach(elem => {
+    elem.addEventListener('mousemove', (e) => {
+      const rect = elem.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      
+      // Calculate distance to center
+      const dist = Math.sqrt(x*x + y*y);
+      const maxDist = 24; // interaction-radius
+      
+      if(dist < 100) { // arbitrary threshold for effect to start
+         elem.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.02)`;
+      } else {
+         elem.style.transform = 'translate(0px, 0px) scale(1)';
+      }
+    });
+    
+    elem.addEventListener('mouseleave', () => {
+      elem.style.transform = 'translate(0px, 0px) scale(1)';
+    });
+  });
+</script>
+</body></html>

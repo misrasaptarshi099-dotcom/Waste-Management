@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwachhRoute AI - Fleet Dispatch &amp; Logistics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;400;500;600&amp;family=Satoshi:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Noto+Serif:wght@400;700&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ba1a1a",
+                        "tertiary": "#006858",
+                        "on-secondary-fixed-variant": "#2c4d3d",
+                        "surface-container-highest": "#ece0dd",
+                        "secondary": "#446554",
+                        "tertiary-container": "#008470",
+                        "surface-variant": "#ece0dd",
+                        "secondary-fixed": "#c6ebd5",
+                        "primary-fixed-dim": "#ffb4a5",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary-fixed": "#002114",
+                        "on-primary-fixed-variant": "#7e2b1c",
+                        "on-background": "#201a18",
+                        "inverse-surface": "#352f2d",
+                        "tertiary-fixed": "#8bf6dc",
+                        "on-secondary-container": "#486a58",
+                        "surface-tint": "#9d4231",
+                        "outline": "#89726d",
+                        "on-primary-fixed": "#3f0300",
+                        "inverse-on-surface": "#faeeeb",
+                        "primary-container": "#b95745",
+                        "tertiary-fixed-dim": "#6ed9c1",
+                        "surface-sand": "#F5ECE3",
+                        "on-surface-variant": "#56423e",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#aacfba",
+                        "on-error-container": "#93000a",
+                        "background-cream": "#FDFBF7",
+                        "primary": "#9a402f",
+                        "secondary-container": "#c3e8d2",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#f2e6e2",
+                        "inverse-primary": "#ffb4a5",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#f4fffa",
+                        "primary-fixed": "#ffdad3",
+                        "surface-bright": "#fff8f6",
+                        "background": "#fff8f6",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f7ebe8",
+                        "surface": "#fff8f6",
+                        "surface-dim": "#e3d8d4",
+                        "surface-container-low": "#fdf1ed",
+                        "on-tertiary-fixed-variant": "#005144",
+                        "on-error": "#ffffff",
+                        "muted-taupe": "#8B7E76",
+                        "outline-variant": "#dcc0bb",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#201a18",
+                        "on-tertiary-fixed": "#00201a",
+                        "terracotta": "#C25E4B",
+                        "sage": "#6B8E7B"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "organic-1": "60% 40% 30% 70% / 60% 30% 70% 40%",
+                        "organic-2": "40% 60% 70% 30% / 40% 50% 60% 50%",
+                        "organic-3": "70% 30% 50% 50% / 30% 30% 70% 70%",
+                    },
+                    spacing: {
+                        "section-gap": "8rem",
+                        "interaction-radius": "24px",
+                        "page-margin": "5vw",
+                        "gutter": "2rem"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Fraunces", "serif"],
+                        "label-md": ["Satoshi", "sans-serif"],
+                        "display-xl": ["Fraunces", "serif"],
+                        "body-lg": ["Satoshi", "sans-serif"],
+                        "headline-md": ["Fraunces", "serif"],
+                        "button": ["Satoshi", "sans-serif"],
+                        "display-lg": ["Fraunces", "serif"],
+                        "body-md": ["Satoshi", "sans-serif"],
+                        "headline-lg": ["Fraunces", "serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "display-xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "130%", "fontWeight": "400" }],
+                        "button": ["16px", { "lineHeight": "100%", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "120%", "fontWeight": "400" }]
+                    },
+                    transitionDuration: {
+                        'fluid': '800ms',
+                    },
+                    transitionTimingFunction: {
+                        'fluid': 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background-cream');
+            color: theme('colors.on-background');
+            position: relative;
+        }
+        
+        /* Subtle Grain Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+        }
+
+        .magnetic-element {
+            transition: transform 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .organic-hover:hover {
+            border-radius: theme('borderRadius.organic-1');
+            transition: border-radius 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Hide scrollbar for clean editorial look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopNavBar (Web Only) -->
+<header class="hidden md:flex justify-between items-center w-full px-page-margin max-w-full mx-auto bg-background-cream/80 backdrop-blur-md sticky top-0 py-4 z-40 transition-fluid">
+<div class="font-headline-md text-headline-md text-primary font-bold tracking-tight">CivicFlow</div>
+<nav class="flex gap-8 items-center">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80" href="#">Dashboard</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80" href="#">Logistics</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80" href="#">Analytics</a>
+<a class="font-label-md text-label-md text-primary border-b-2 border-primary pb-1 transition-all duration-300 hover:opacity-80" href="#">Reports</a>
+</nav>
+<div class="flex gap-4 items-center text-primary">
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80 transition-fluid" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:opacity-80 transition-fluid" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- TopNavBar Mobile Fallback Header -->
+<header class="md:hidden flex justify-between items-center px-page-margin py-4 bg-background-cream/80 backdrop-blur-md sticky top-0 z-40">
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold tracking-tight">CivicFlow</div>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="notifications">notifications</span>
+</header>
+<!-- Main Editorial Layout -->
+<main class="flex-1 flex flex-col md:flex-row px-page-margin py-8 md:py-12 gap-gutter relative z-10 pb-32">
+<!-- Left Sidebar (Sticky Editorial) -->
+<aside class="w-full md:w-1/4 flex flex-col gap-12 md:sticky md:top-24 h-fit">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-8">Live Fleet<br/>Logistics</h1>
+<button class="magnetic-element organic-hover w-full py-4 px-8 bg-surface-sand text-on-surface-variant font-button text-button rounded-full flex items-center justify-center gap-3 transition-fluid shadow-sm hover:bg-terracotta hover:text-on-primary group">
+<span class="material-symbols-outlined group-hover:rotate-12 transition-fluid" data-icon="local_shipping">local_shipping</span>
+                    Dispatch Fleet
+                </button>
+</div>
+<!-- High-level Metrics -->
+<div class="flex flex-col gap-6">
+<h3 class="font-label-md text-label-md text-muted-taupe uppercase tracking-widest">Fleet Health</h3>
+<div class="bg-surface-sand p-6 rounded-[32px] rounded-tl-[12px] rounded-br-[12px] flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Active SATs</span>
+<div class="flex items-baseline gap-2">
+<span class="font-mono text-headline-md text-on-background">142</span>
+<span class="font-mono text-body-md text-muted-taupe">/150</span>
+</div>
+</div>
+<div class="bg-surface-sand p-6 rounded-[32px] rounded-tr-[12px] rounded-bl-[12px] flex flex-col gap-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Fuel Efficiency</span>
+<div class="flex items-baseline gap-2 text-sage">
+<span class="material-symbols-outlined text-lg" data-icon="trending_up">trending_up</span>
+<span class="font-mono text-headline-md">+4.2%</span>
+</div>
+</div>
+<!-- Atmospheric Image placeholder -->
+<div class="mt-4 rounded-organic-2 overflow-hidden h-48 w-full relative">
+<img class="object-cover w-full h-full transform hover:scale-105 transition-fluid" data-alt="A macro, soft-focus shot of heavy machinery tires resting on wet asphalt, illuminated by warm, cinematic sunset lighting. The color palette features deep greys, subtle terracotta rust tones, and creamy highlights. The composition is asymmetrical, evoking a sense of grounded, tactile industrial readiness in a high-end editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrWP_Eyha0UXLPh2mUb1z_snXTC-naT1C-CvSdXEytB3q2l9RQbaKE5sXwKLTBj43vgyYGLR1S13eirDBgA0VVy_d130_Td1rjjmXPlIYD88AhkK_CjKQsqZ67HSaqM75TnjAQxikYMq2DC54EdhPoKeM-Z5R8X_ewVJxrntRTNFzpEaLeROzx4JHLx-xSS6eJf-LW1AMSQx63aD7SnlrxPYhji1dwP3KZcjPKHdIoJip1jXDXy976"/>
+</div>
+</div>
+</aside>
+<!-- Main Content (75%) - Scrolling Canvas -->
+<section class="w-full md:w-3/4 flex flex-col gap-4">
+<!-- Table Header -->
+<div class="hidden md:grid grid-cols-5 gap-4 px-6 py-4 border-b border-muted-taupe/30">
+<span class="font-label-md text-label-md text-muted-taupe uppercase">Vehicle ID</span>
+<span class="font-label-md text-label-md text-muted-taupe uppercase">Current Ward</span>
+<span class="font-label-md text-label-md text-muted-taupe uppercase">Fuel Level</span>
+<span class="font-label-md text-label-md text-muted-taupe uppercase">Route Progress</span>
+<span class="font-label-md text-label-md text-muted-taupe uppercase text-right">Status</span>
+</div>
+<!-- Fleet Cards / Rows -->
+<div class="flex flex-col gap-4">
+<!-- Vehicle 1 -->
+<div class="bg-surface-sand/50 backdrop-blur-sm p-6 rounded-[24px] rounded-tr-[8px] flex flex-col md:grid md:grid-cols-5 gap-4 items-center hover:bg-surface-sand transition-fluid magnetic-element">
+<div class="w-full md:w-auto font-mono text-body-md text-on-background font-medium">SR-7042</div>
+<div class="w-full md:w-auto font-body-md text-on-surface-variant">Ward 12 (Downtown)</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>78%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-terracotta rounded-full w-[78%]"></div>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>45/60 Stops</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-sage rounded-full w-[75%]"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end">
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md border border-muted-taupe/20">On Route</span>
+</div>
+</div>
+<!-- Vehicle 2 -->
+<div class="bg-surface-sand/50 backdrop-blur-sm p-6 rounded-[24px] rounded-bl-[8px] flex flex-col md:grid md:grid-cols-5 gap-4 items-center hover:bg-surface-sand transition-fluid magnetic-element">
+<div class="w-full md:w-auto font-mono text-body-md text-on-background font-medium">SR-9120</div>
+<div class="w-full md:w-auto font-body-md text-on-surface-variant">Transfer Station Alpha</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>42%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-terracotta rounded-full w-[42%]"></div>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>60/60 Stops</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-sage rounded-full w-[100%]"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end">
+<span class="px-4 py-1.5 rounded-full bg-terracotta/20 text-terracotta font-label-md text-label-md">Dumping</span>
+</div>
+</div>
+<!-- Vehicle 3 -->
+<div class="bg-surface-sand/50 backdrop-blur-sm p-6 rounded-[24px] rounded-br-[8px] flex flex-col md:grid md:grid-cols-5 gap-4 items-center hover:bg-surface-sand transition-fluid magnetic-element">
+<div class="w-full md:w-auto font-mono text-body-md text-on-background font-medium">SR-3301</div>
+<div class="w-full md:w-auto font-body-md text-on-surface-variant">Depot (Bay 4)</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>15%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error/70 rounded-full w-[15%]"></div>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>0/45 Stops</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-sage rounded-full w-[0%]"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end">
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-muted-taupe font-label-md text-label-md border border-muted-taupe/20">Maintenance</span>
+</div>
+</div>
+<!-- Vehicle 4 -->
+<div class="bg-surface-sand/50 backdrop-blur-sm p-6 rounded-[24px] flex flex-col md:grid md:grid-cols-5 gap-4 items-center hover:bg-surface-sand transition-fluid magnetic-element">
+<div class="w-full md:w-auto font-mono text-body-md text-on-background font-medium">SR-8845</div>
+<div class="w-full md:w-auto font-body-md text-on-surface-variant">Ward 03 (Suburbs)</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>92%</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-terracotta rounded-full w-[92%]"></div>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between text-xs font-mono text-muted-taupe">
+<span>12/55 Stops</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-sage rounded-full w-[22%]"></div>
+</div>
+</div>
+<div class="w-full md:w-auto flex justify-end">
+<span class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md border border-muted-taupe/20">On Route</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-center items-center pb-8 pointer-events-none child-pointer-events-auto">
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-auto min-w-[320px] rounded-full px-6 py-3 bg-surface-sand/90 backdrop-blur-xl shadow-lg flex justify-between pointer-events-auto">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Command</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+<span class="font-label-md text-label-md mt-1">Routes</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-2 scale-105 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-md text-label-md mt-1">Fleet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+<span class="font-label-md text-label-md mt-1">Alerts</span>
+</a>
+</div>
+</nav>
+<script>
+        // Simple Magnetic Interaction Script for buttons and cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const magnetics = document.querySelectorAll('.magnetic-element');
+            
+            magnetics.forEach(elem => {
+                elem.addEventListener('mousemove', (e) => {
+                    const rect = elem.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    // Subtle movement
+                    elem.style.transform = `translate(${x * 0.05}px, ${y * 0.05}px)`;
+                });
+                
+                elem.addEventListener('mouseleave', () => {
+                    elem.style.transform = 'translate(0px, 0px)';
+                });
+            });
+        });
+    </script>
+</body></html>

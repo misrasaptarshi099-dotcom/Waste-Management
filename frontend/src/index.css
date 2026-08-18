@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-canvas text-slate-100 font-body overflow-x-hidden;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* Leaflet Container overrides */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #030712 !important;
+  font-family: 'Satoshi', sans-serif !important;
+}
+
+.leaflet-tile {
+  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.leaflet-popup-content-wrapper {
+  background: #0F172A !important;
+  color: #F8FAFC !important;
+  border: 1px solid #1E293B !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+  padding: 4px !important;
+}
+
+.leaflet-popup-tip {
+  background: #0F172A !important;
+  border: 1px solid #1E293B !important;
+}
+
+/* Pulsing aura for overflowing bin nodes */
+@keyframes ping-slow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+  }
+  70% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.pulse-critical {
+  animation: ping-slow 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping-amber {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+.pulse-amber {
+  animation: ping-amber 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Polyline dash animation */
+.animated-dash-polyline {
+  stroke-dasharray: 6, 12;
+  animation: dash 35s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 41, 59, 0.8);
+}
+
+.glass-panel-sand {
+  background: rgba(245, 236, 227, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(220, 192, 187, 0.6);
+}

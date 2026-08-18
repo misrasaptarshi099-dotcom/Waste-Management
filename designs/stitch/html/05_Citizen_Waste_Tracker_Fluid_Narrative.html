@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>SwachhRoute AI - Citizen Waste Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "surface-container": "#f7ebe8",
+                            "outline-variant": "#dcc0bb",
+                            "on-tertiary": "#ffffff",
+                            "tertiary-fixed": "#8bf6dc",
+                            "surface-sand": "#F5ECE3",
+                            "surface-dim": "#e3d8d4",
+                            "secondary-fixed": "#c6ebd5",
+                            "inverse-surface": "#352f2d",
+                            "on-error": "#ffffff",
+                            "surface-container-highest": "#ece0dd",
+                            "secondary": "#446554",
+                            "on-primary-container": "#fffbff",
+                            "on-background": "#201a18",
+                            "surface-container-low": "#fdf1ed",
+                            "on-secondary-fixed-variant": "#2c4d3d",
+                            "surface": "#fff8f6",
+                            "tertiary-fixed-dim": "#6ed9c1",
+                            "on-secondary": "#ffffff",
+                            "surface-variant": "#ece0dd",
+                            "primary-fixed-dim": "#ffb4a5",
+                            "secondary-container": "#c3e8d2",
+                            "tertiary": "#006858",
+                            "background": "#fff8f6",
+                            "on-secondary-fixed": "#002114",
+                            "surface-container-lowest": "#ffffff",
+                            "secondary-fixed-dim": "#aacfba",
+                            "inverse-on-surface": "#faeeeb",
+                            "primary-container": "#b95745",
+                            "surface-container-high": "#f2e6e2",
+                            "on-primary": "#ffffff",
+                            "tertiary-container": "#008470",
+                            "on-secondary-container": "#486a58",
+                            "error-container": "#ffdad6",
+                            "on-surface": "#201a18",
+                            "inverse-primary": "#ffb4a5",
+                            "muted-taupe": "#8B7E76",
+                            "background-cream": "#FDFBF7",
+                            "on-primary-fixed-variant": "#7e2b1c",
+                            "primary-fixed": "#ffdad3",
+                            "error": "#ba1a1a",
+                            "on-error-container": "#93000a",
+                            "on-primary-fixed": "#3f0300",
+                            "on-tertiary-fixed": "#00201a",
+                            "on-surface-variant": "#56423e",
+                            "outline": "#89726d",
+                            "on-tertiary-fixed-variant": "#005144",
+                            "primary": "#9a402f",
+                            "surface-bright": "#fff8f6",
+                            "on-tertiary-container": "#f4fffa",
+                            "surface-tint": "#9d4231"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "gutter": "2rem",
+                            "page-margin": "5vw",
+                            "interaction-radius": "24px",
+                            "section-gap": "8rem"
+                    },
+                    "fontFamily": {
+                            "button": ["dmSans", "sans-serif"],
+                            "headline-lg": ["notoSerif", "serif"],
+                            "display-xl": ["notoSerif", "serif"],
+                            "label-md": ["dmSans", "sans-serif"],
+                            "body-lg": ["dmSans", "sans-serif"],
+                            "body-md": ["dmSans", "sans-serif"],
+                            "headline-md": ["notoSerif", "serif"],
+                            "headline-lg-mobile": ["notoSerif", "serif"],
+                            "display-lg": ["notoSerif", "serif"]
+                    },
+                    "fontSize": {
+                            "button": ["16px", {"lineHeight": "100%", "fontWeight": "700"}],
+                            "headline-lg": ["48px", {"lineHeight": "120%", "fontWeight": "400"}],
+                            "display-xl": ["120px", {"lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400"}],
+                            "label-md": ["14px", {"lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                            "body-lg": ["20px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                            "body-md": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                            "headline-md": ["32px", {"lineHeight": "130%", "fontWeight": "400"}],
+                            "headline-lg-mobile": ["32px", {"lineHeight": "120%", "fontWeight": "400"}],
+                            "display-lg": ["80px", {"lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #FDFBF7; /* background-cream */
+            color: #201a18; /* on-background */
+        }
+
+        /* 4% Grain Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Organic Mask */
+        .organic-mask {
+            clip-path: path('M120 10C 200 -20, 240 100, 200 180 C 160 260, 40 260, 10 180 C -20 100, 40 -20, 120 10 Z');
+            transition: clip-path 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover .organic-mask {
+            clip-path: path('M130 15C 210 -10, 230 110, 190 190 C 150 270, 30 250, 20 170 C -10 90, 50 -10, 130 15 Z');
+        }
+
+        /* Fluid Animation Timing */
+        .fluid-transition {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Soft Surface Elevation */
+        .surface-elevation {
+            background-color: #F5ECE3; /* surface-sand */
+            box-shadow: 0 4px 20px rgba(139, 126, 118, 0.08); /* muted-taupe tint */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="relative min-h-screen overflow-x-hidden pb-32">
+<div class="grain-overlay"></div>
+<!-- Header / Language Toggle -->
+<header class="fixed top-0 w-full z-40 bg-background-cream/80 backdrop-blur-md px-page-margin py-4 flex justify-between items-center fluid-transition">
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tighter">
+            Refined Waste
+        </div>
+<button class="bg-surface-sand px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md flex items-center gap-2 hover:bg-surface-dim fluid-transition">
+<span class="material-symbols-outlined" style="font-size: 16px;">translate</span>
+<span>ENG / MAR</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-28 px-page-margin flex flex-col gap-8">
+<!-- Hero Section -->
+<section class="flex flex-col gap-4 relative">
+<div class="inline-flex items-center gap-2 bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-md text-label-md w-fit">
+<span class="material-symbols-outlined" style="font-size: 16px;">local_shipping</span>
+                Live Tracking
+            </div>
+<h1 class="font-display-lg text-display-lg text-primary leading-none">
+                08:45 AM
+            </h1>
+<p class="font-headline-md text-headline-md text-on-background opacity-80 mt-[-10px]">
+                Estimated Arrival
+            </p>
+<div class="font-body-md text-body-md text-muted-taupe flex items-center gap-2 mt-2">
+<span>Tipper MH-12-QZ-4821</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="text-secondary font-medium">4 stops away</span>
+</div>
+</section>
+<!-- Route Progress / Map Area -->
+<section class="w-full h-48 surface-elevation rounded-3xl relative overflow-hidden flex items-center justify-center p-4">
+<!-- Simulated Map Visual -->
+<div class="absolute inset-0 w-full h-full opacity-40 bg-cover bg-center" data-alt="A stylized, minimalist soft-toned map illustration focusing on organic routes and neighborhood streets. The map uses a light cream and warm sand color palette with terracotta accents denoting a specific route path. The aesthetic is flat, high-end editorial, with no harsh lines or busy text, just smooth geographic shapes and soft lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDg9HI4vknKk2R1P0i6A9o5cYyiDEWwKlD2kby-SE-detyBL7kHGPSFN66z_ZEg7ff6EexI0X5FnO2T18EeuRZg17oi6xx-iyranb1CHUUGdfzz4BcOKeg_JtykmltTwLOMY2XP8TgFomNf7bQ63IBqsgMYCAq-73kTii_2Ou1eFmloJvMWs1idfemlF-cWjiypK2kKV9l0NY4UAGhNfB0Iz8NVJV8sIc9NawnXouowr5KCDc0giMtn')"></div>
+<!-- Vehicle Indicator -->
+<div class="relative z-10 bg-primary-container text-on-primary-container p-3 rounded-full shadow-lg fluid-transition hover:scale-110">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1; font-size: 28px;">airport_shuttle</span>
+</div>
+</section>
+<!-- Guide Section (Bento Style) -->
+<section class="flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-background">Preparation Guide</h2>
+<div class="grid grid-cols-1 gap-4">
+<!-- Wet Waste Card -->
+<article class="surface-elevation rounded-[2rem] p-6 flex items-center justify-between card-hover cursor-pointer fluid-transition">
+<div class="flex flex-col gap-2 w-1/2">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined" style="font-size: 20px;">compost</span>
+<span class="font-label-md text-label-md">GREEN BIN</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-background font-medium">Wet Waste</h3>
+<p class="font-body-md text-body-md text-muted-taupe">ओला कचरा (Ola Kachra)</p>
+</div>
+<div class="w-24 h-24 bg-secondary-container organic-mask flex items-center justify-center relative overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply fluid-transition" data-alt="A beautifully crafted, minimalist 3D rendering of organic wet waste, like fruit peels and vegetable scraps, contained within a soft, rounded green shape. The lighting is soft and studio-quality, emphasizing organic textures and approachable design within a light mode editorial style. No sharp edges, purely human-centric visuals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_YfGqyeUTthq2ZnqMYjiv4zuGjbnHZUnLxup4-GOCgZ-fmq3JO_rCrHEpIcTrKLTBQknnPNZXljtEPXidYKr8dYiuo3KODebug34ibHeWtoU3Lv0E-PDvN4Hq5F44SKLouaSemi-mfSt1vO1DoTfpbfmdsS2vkA17KSbWpzWZbg5BYimVeCGtRl6M1E0o__boQh3F6a_YckigMqrAC4humY2cqB5uRM-woywR3hPNtG69SmtABvM5"/>
+</div>
+</article>
+<!-- Dry Waste Card -->
+<article class="bg-surface-container-high rounded-[2rem] p-6 flex items-center justify-between card-hover cursor-pointer fluid-transition">
+<div class="flex flex-col gap-2 w-1/2">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">recycling</span>
+<span class="font-label-md text-label-md">BLUE BIN</span>
+</div>
+<h3 class="font-body-lg text-body-lg text-on-background font-medium">Dry Waste</h3>
+<p class="font-body-md text-body-md text-muted-taupe">सुका कचरा (Suka Kachra)</p>
+</div>
+<div class="w-24 h-24 bg-surface-variant organic-mask flex items-center justify-center relative overflow-hidden">
+<span class="material-symbols-outlined text-outline text-4xl fluid-transition">inventory_2</span>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell (From JSON) -->
+<nav class="hidden md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] rounded-full z-50 backdrop-blur-xl bg-surface-sand/90 dark:bg-surface-dim/90 shadow-sm flex justify-between items-center p-2 fluid-transition">
+<button aria-label="Home" class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-2 scale-90 duration-800 ease-[cubic-bezier(0.4,0,0.2,1)]">
+<span class="material-symbols-outlined">tap_and_play</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</button>
+<button aria-label="Streams" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800">
+<span class="material-symbols-outlined">eco</span>
+<span class="font-label-md text-label-md mt-1">Streams</span>
+</button>
+<button aria-label="Track" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md mt-1">Track</span>
+</button>
+<button aria-label="Profile" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</button>
+</nav>
+<!-- Mobile Visible Bottom Nav (Using classes mapped from JSON explicitly for the requested view) -->
+<nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] rounded-full z-50 backdrop-blur-xl bg-surface-sand/90 shadow-sm flex justify-between items-center p-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800" href="#">
+<span class="material-symbols-outlined">tap_and_play</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800" href="#">
+<span class="material-symbols-outlined">eco</span>
+<span class="font-label-md text-label-md mt-1">Streams</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-2 scale-90 duration-800 ease-[cubic-bezier(0.4,0,0.2,1)]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md mt-1">Track</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 hover:scale-110 transition-transform duration-800" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

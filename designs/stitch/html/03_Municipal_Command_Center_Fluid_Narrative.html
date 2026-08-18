@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwachhRoute AI - Command Center</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&amp;family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#f7ebe8",
+                        "outline-variant": "#dcc0bb",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#8bf6dc",
+                        "surface-sand": "#F5ECE3",
+                        "surface-dim": "#e3d8d4",
+                        "secondary-fixed": "#c6ebd5",
+                        "inverse-surface": "#352f2d",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#ece0dd",
+                        "secondary": "#446554",
+                        "on-primary-container": "#fffbff",
+                        "on-background": "#201a18",
+                        "surface-container-low": "#fdf1ed",
+                        "on-secondary-fixed-variant": "#2c4d3d",
+                        "surface": "#fff8f6",
+                        "tertiary-fixed-dim": "#6ed9c1",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#ece0dd",
+                        "primary-fixed-dim": "#ffb4a5",
+                        "secondary-container": "#c3e8d2",
+                        "tertiary": "#006858",
+                        "background": "#fff8f6",
+                        "on-secondary-fixed": "#002114",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#aacfba",
+                        "inverse-on-surface": "#faeeeb",
+                        "primary-container": "#b95745",
+                        "surface-container-high": "#f2e6e2",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#008470",
+                        "on-secondary-container": "#486a58",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#201a18",
+                        "inverse-primary": "#ffb4a5",
+                        "muted-taupe": "#8B7E76",
+                        "background-cream": "#FDFBF7",
+                        "on-primary-fixed-variant": "#7e2b1c",
+                        "primary-fixed": "#ffdad3",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#3f0300",
+                        "on-tertiary-fixed": "#00201a",
+                        "on-surface-variant": "#56423e",
+                        "outline": "#89726d",
+                        "on-tertiary-fixed-variant": "#005144",
+                        "primary": "#9a402f",
+                        "surface-bright": "#fff8f6",
+                        "on-tertiary-container": "#f4fffa",
+                        "surface-tint": "#9d4231"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "organic": "60% 40% 50% 50% / 40% 50% 50% 60%",
+                        "organic-alt": "40% 60% 50% 50% / 50% 40% 60% 50%"
+                    },
+                    "spacing": {
+                        "gutter": "2rem",
+                        "page-margin": "5vw",
+                        "interaction-radius": "24px",
+                        "section-gap": "8rem"
+                    },
+                    "fontFamily": {
+                        "button": ["DM Sans", "sans-serif"],
+                        "headline-lg": ["Noto Serif", "serif"],
+                        "display-xl": ["Noto Serif", "serif"],
+                        "label-md": ["DM Sans", "sans-serif"],
+                        "body-lg": ["DM Sans", "sans-serif"],
+                        "body-md": ["DM Sans", "sans-serif"],
+                        "headline-md": ["Noto Serif", "serif"],
+                        "headline-lg-mobile": ["Noto Serif", "serif"],
+                        "display-lg": ["Noto Serif", "serif"]
+                    },
+                    "fontSize": {
+                        "button": ["16px", { "lineHeight": "100%", "fontWeight": "700" }],
+                        "headline-lg": ["48px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "display-xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "130%", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "display-lg": ["80px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Styles for Fluid Narrative Design System */
+        body {
+            background-color: theme('colors.background-cream');
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Organic Transitions */
+        .organic-transition {
+            transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Subtle Grain Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Magnetic Hover Effect Utility */
+        .magnetic {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Hide scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        /* Map Masking */
+        .map-mask {
+            clip-path: path('M10 50 C 20 0, 80 0, 90 50 C 100 100, 80 150, 50 150 C 20 150, 0 100, 10 50 Z'); /* Fallback/Placeholder path */
+            /* In a real scenario, an inline SVG mask might be more robust for scaling */
+        }
+        
+        .editorial-stack {
+            position: sticky;
+            top: 8rem;
+        }
+    </style>
+</head>
+<body class="text-on-background min-h-screen relative font-body-md text-body-md antialiased selection:bg-surface-sand selection:text-primary">
+<!-- Grain Texture Overlay -->
+<div class="grain-overlay"></div>
+<!-- TopAppBar (From JSON) -->
+<header class="bg-background-cream dark:bg-background-cream text-primary dark:text-primary w-full top-0 px-gutter py-4 transition-all duration-[800ms] cubic-bezier(0.4, 0, 0.2, 1) flex justify-between items-center z-40 relative">
+<div class="font-label-md text-label-md tracking-widest text-primary dark:text-primary uppercase flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">public</span>
+            MUNICIPALITY
+        </div>
+<!-- Navigation (Desktop) - Suppressed per rules? No, this is a top level dashboard. BUT user requested "A reimagined Municipal Command Center". We'll include desktop nav here if needed, but the JSON only has TopAppBar and BottomNavBar. We'll use TopAppBar for desktop structure. -->
+<nav class="hidden md:flex gap-8 items-center">
+<!-- Simulated Nav Links for Context, though not explicitly in JSON for TopAppBar, JSON says "style_active_navigation": "text-primary font-bold", implying nav might be here or just the structure. -->
+<span class="text-primary font-bold organic-transition hover:text-primary transition-colors duration-300 cursor-pointer">Command</span>
+<span class="text-muted-taupe organic-transition hover:text-primary transition-colors duration-300 cursor-pointer">Analytics</span>
+<span class="text-muted-taupe organic-transition hover:text-primary transition-colors duration-300 cursor-pointer">Fleet</span>
+<span class="text-muted-taupe organic-transition hover:text-primary transition-colors duration-300 cursor-pointer">Citizen</span>
+</nav>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<!-- Search Bar Placeholder "on_right" -->
+<span class="material-symbols-outlined text-muted-taupe absolute left-3 top-1/2 -translate-y-1/2">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-sand/50 rounded-full border-none focus:ring-1 focus:ring-primary outline-none transition-all duration-300 text-body-sm w-48 focus:w-64" placeholder="Search" type="text"/>
+</div>
+<!-- Trailing Icons -->
+<button class="text-muted-taupe hover:text-primary transition-colors duration-300"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-muted-taupe hover:text-primary transition-colors duration-300"><span class="material-symbols-outlined">settings</span></button>
+</div>
+</header>
+<!-- Main Layout: Fluid Editorial Stacking -->
+<main class="w-full max-w-[1600px] mx-auto px-gutter py-8 md:py-12 flex flex-col md:flex-row gap-8 lg:gap-16 relative z-10">
+<!-- Left Panel: Sticky Editorial Column (approx 40vw) -->
+<section class="w-full md:w-5/12 lg:w-4/12 flex flex-col gap-12 editorial-stack h-fit">
+<!-- Context Header -->
+<div class="flex flex-col gap-4">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Live Overview</span>
+<h1 class="font-headline-lg text-headline-lg text-on-background">AI Routing Intelligence Active.</h1>
+<p class="font-body-md text-body-md text-muted-taupe">Optimizing municipal solid waste collection across 14 zones. Current focus on minimizing idle time and rerouting for ongoing festival blockages.</p>
+</div>
+<!-- KPI Metrics Blocks (Organic Shapes) -->
+<div class="flex flex-col gap-6">
+<!-- Metric 1 -->
+<div class="bg-surface-sand rounded-organic p-8 flex flex-col gap-2 organic-transition hover:scale-[1.02] cursor-default">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-muted-taupe">Distance Saved</span>
+<span class="material-symbols-outlined text-tertiary">route</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary" style="font-family: 'JetBrains Mono', monospace;">-33.9%</span>
+</div>
+<!-- Metric 2 & 3 Cluster -->
+<div class="flex gap-6">
+<div class="bg-surface-sand rounded-organic-alt p-6 flex flex-col gap-2 flex-1 organic-transition hover:scale-[1.02] cursor-default">
+<span class="font-label-md text-label-md text-muted-taupe">Fuel Saved</span>
+<span class="font-body-lg text-body-lg text-on-background" style="font-family: 'JetBrains Mono', monospace;">42.6 L</span>
+</div>
+<div class="bg-surface-sand rounded-[2rem] p-6 flex flex-col gap-2 flex-1 organic-transition hover:scale-[1.02] cursor-default">
+<span class="font-label-md text-label-md text-muted-taupe">Cost Saved</span>
+<span class="font-body-lg text-body-lg text-on-background" style="font-family: 'JetBrains Mono', monospace;">₹3,834</span>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="pt-4">
+<button class="bg-primary text-on-primary font-button text-button px-8 py-5 rounded-[2rem] organic-transition hover:bg-surface-tint shadow-lg shadow-primary/20 flex items-center gap-3 magnetic group w-full md:w-auto justify-center">
+                    Dispatch AI Fleet
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Right Panel: Canvas / Map (approx 60vw) -->
+<section class="w-full md:w-7/12 lg:w-8/12 min-h-[614px] md:min-h-[819px] relative flex flex-col">
+<!-- Map Container with Organic Masking concept (using border radius for simplicity in pure CSS without complex SVG inline masking, as requested to avoid complex raw SVGs if possible, but we'll use a complex border-radius to simulate organicism) -->
+<div class="w-full h-full min-h-[500px] flex-1 bg-surface-sand rounded-[40%_60%_70%_30%/40%_50%_60%_50%] overflow-hidden relative shadow-sm organic-transition hover:rounded-[50%_50%_40%_60%/60%_40%_50%_50%]">
+<!-- Map Image Placeholder with detailed alt text -->
+<div class="bg-cover bg-center w-full h-full absolute inset-0 opacity-80 mix-blend-multiply transition-transform duration-1000 hover:scale-105" data-alt="A top-down view of a modern, stylized digital map of a city municipality. The map uses a light mode aesthetic with warm cream backgrounds. Route lines are depicted in glowing emerald green, and ward boundaries are subtly outlined in muted slate. The style is highly technical yet elegant, suitable for a high-end dashboard interface, with no text labels." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAo6We5jTMUrqO-_ajvnz4WOWFnBTVc_7pylM5zuNJi1Db_AQ-0LJ5ucUlQ5WMLb78UXYZyYW4D_t-mIMeQI9qk91hIC-enFZJgaYresZlirs-nUhbh6iSLf-tKSbg975D5mhPGd8PJQ90cfWaoIyAqVDPqxyAWN-o4ZF2vSorrGIbBXWJ7xvvi3AnMKDX5rJR13O6dwLTA7CaVb1LAxhiaXKt0Fzmvy0HMOtmG0Optqc1pClC0kezE')"></div>
+<!-- Overlay Elements to simulate GIS UI -->
+<div class="absolute top-8 left-8 bg-background-cream/90 backdrop-blur-md rounded-2xl p-4 shadow-sm flex flex-col gap-3">
+<span class="font-label-md text-label-md text-on-background uppercase tracking-wider">Active Wards</span>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="font-body-md text-body-md">Ward A (Optimized)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-muted-taupe"></div>
+<span class="font-body-md text-body-md">Ward B (Pending)</span>
+</div>
+</div>
+<!-- Simulation Controller Overlay (Contextual to the map) -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-surface-sand/90 backdrop-blur-xl rounded-full px-6 py-3 w-auto min-w-[320px] shadow-sm flex items-center justify-between gap-4 border border-outline-variant/30">
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-highest transition-colors text-on-surface-variant"><span class="material-symbols-outlined">play_arrow</span></button>
+<div class="w-32 h-1 bg-surface-dim rounded-full relative">
+<div class="absolute left-0 top-0 h-full bg-primary rounded-full w-1/3"></div>
+<div class="absolute left-1/3 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full shadow cursor-grab"></div>
+</div>
+<span class="font-body-md text-body-md text-muted-taupe text-sm">08:00 AM</span>
+</div>
+<div class="w-px h-6 bg-outline-variant/50"></div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<div class="w-10 h-5 bg-surface-dim rounded-full relative group-hover:bg-primary/20 transition-colors">
+<div class="absolute left-1 top-1 w-3 h-3 bg-muted-taupe rounded-full transition-all group-hover:translate-x-5 group-hover:bg-primary"></div>
+</div>
+<span class="font-label-md text-label-md text-on-background">Ganesh Chaturthi Surge</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (From JSON) - Mobile Only per Semantic Shell Mandate -->
+<nav class="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center justify-around gap-2 bg-surface-sand/80 dark:bg-surface-sand/80 backdrop-blur-xl rounded-full px-6 py-3 w-auto min-w-[320px] shadow-sm">
+<!-- Active Tab -->
+<button class="bg-primary text-on-primary rounded-full px-4 py-2 flex items-center gap-2 cursor-pointer active:scale-95 transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Command</span>
+</button>
+<!-- Inactive Tabs -->
+<button class="text-on-surface-variant flex items-center px-4 py-2 hover:bg-surface-container-highest transition-all duration-300 rounded-full cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="text-on-surface-variant flex items-center px-4 py-2 hover:bg-surface-container-highest transition-all duration-300 rounded-full cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">local_shipping</span>
+</button>
+<button class="text-on-surface-variant flex items-center px-4 py-2 hover:bg-surface-container-highest transition-all duration-300 rounded-full cursor-pointer active:scale-95">
+<span class="material-symbols-outlined">person</span>
+</button>
+</nav>
+<!-- Simple Vanilla JS for Magnetic Effect -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const magnetics = document.querySelectorAll('.magnetic');
+            
+            magnetics.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    // Limit the movement
+                    const moveX = x * 0.2;
+                    const moveY = y * 0.2;
+                    
+                    btn.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
+                
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = `translate(0px, 0px)`;
+                });
+            });
+        });
+    </script>
+</body></html>
