@@ -11,11 +11,13 @@ Endpoints:
   GET  /api/citizen/lookup?zone_id=  — Citizen-facing schedule and waste guide
 """
 
+import asyncio
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, date
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,6 +29,7 @@ from .schemas import (
     StopsResponse,
     StopModel,
     RoutePlanResponse,
+    OptimizationJobStatus,
     CitySavingsResponse,
     CitizenLookupResponse,
     CitizenSchedule,
@@ -185,75 +188,130 @@ async def get_stops(
 
 
 # ---------------------------------------------------------------------------
+# Background Optimization Worker & Deduplication
+# ---------------------------------------------------------------------------
+
+_active_optimization_tasks: dict[str, asyncio.Task] = {}
+_executor = ThreadPoolExecutor(max_workers=2)
+
+
+def _run_optimization_sync(target_date: str) -> dict:
+    """Synchronous CVRP optimization run executed in thread pool."""
+    from .optimize import run_full_city_optimization
+    return run_full_city_optimization(target_date)
+
+
+async def _get_or_schedule_optimization(
+    target_date: str,
+) -> tuple[Optional[dict], Optional[dict]]:
+    """
+    Shared deduplicated background-worker path for full city CVRP optimization.
+    Executes heavy OR-Tools optimization off the event loop.
+
+    Returns:
+        (result_data, None) if completed/cached, or (None, job_status_dict) if computing.
+    """
+    # 1. Check disk cache
+    if ROUTES_PATH.exists():
+        try:
+            with open(ROUTES_PATH, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            if cached.get("date") == target_date:
+                return cached, None
+        except Exception:
+            pass
+
+    # 2. Check if a background job is already in flight for this date (deduplication)
+    existing_task = _active_optimization_tasks.get(target_date)
+    if existing_task and not existing_task.done():
+        return None, {
+            "status": "in_progress",
+            "date": target_date,
+            "message": "Optimization job is currently in progress off the event loop.",
+        }
+
+    # 3. Schedule new optimization job off the event loop
+    loop = asyncio.get_running_loop()
+
+    async def _worker():
+        try:
+            return await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
+        finally:
+            _active_optimization_tasks.pop(target_date, None)
+
+    task = asyncio.create_task(_worker())
+    _active_optimization_tasks[target_date] = task
+
+    return None, {
+        "status": "in_progress",
+        "date": target_date,
+        "message": "Optimization job started in background worker off the event loop.",
+    }
+
+
+# ---------------------------------------------------------------------------
 # GET /api/routes/comparison?date=YYYY-MM-DD
 # ---------------------------------------------------------------------------
 
-@app.get("/api/routes/comparison", tags=["Routes"])
+@app.get(
+    "/api/routes/comparison",
+    response_model=Union[RoutePlanResponse, OptimizationJobStatus],
+    tags=["Routes"],
+)
 async def get_routes_comparison(
     date: str = Query(default=None, description="Date for route optimisation (YYYY-MM-DD)"),
 ):
     """
     Run full static-vs-dynamic route comparison for all 15 wards.
 
-    This endpoint triggers the OR-Tools CVRP solver if results for
-    the requested date are not cached. Typical response time: 10-30s
-    for a full city optimisation.
+    Returns cached RoutePlanResponse if available. On cache miss, dispatches
+    optimization off the event loop in a deduplicated background worker and returns
+    a 202 job-status response while work is in progress.
     """
     target_date = _validate_date(date) if date else _default_date()
 
-    # Check if we have a cached result for this date
-    if ROUTES_PATH.exists():
-        with open(ROUTES_PATH, "r", encoding="utf-8") as f:
-            cached = json.load(f)
-        if cached.get("date") == target_date:
-            return JSONResponse(content=cached)
+    result, status_info = await _get_or_schedule_optimization(target_date)
+    if result is not None:
+        return result
 
-    # Run optimisation on-demand
-    from .optimize import run_full_city_optimization
-    result = run_full_city_optimization(target_date)
-    return JSONResponse(content=json.loads(json.dumps(result, default=str)))
+    return JSONResponse(status_code=202, content=status_info)
 
 
 # ---------------------------------------------------------------------------
 # GET /api/stats/savings?date=YYYY-MM-DD
 # ---------------------------------------------------------------------------
 
-@app.get("/api/stats/savings", response_model=CitySavingsResponse, tags=["Statistics"])
+@app.get(
+    "/api/stats/savings",
+    response_model=Union[CitySavingsResponse, OptimizationJobStatus],
+    tags=["Statistics"],
+)
 async def get_savings(
     date: str = Query(default=None, description="Date for savings stats (YYYY-MM-DD)"),
 ):
     """
     Return lightweight city-wide savings KPIs without full route data.
-    Reads from cached routes_comparison.json or triggers optimisation.
+    Routes through the shared background worker on cache miss.
     """
     target_date = _validate_date(date) if date else _default_date()
 
-    # Try cached result
-    comparison = None
-    if ROUTES_PATH.exists():
-        with open(ROUTES_PATH, "r", encoding="utf-8") as f:
-            cached = json.load(f)
-        if cached.get("date") == target_date:
-            comparison = cached
+    result, status_info = await _get_or_schedule_optimization(target_date)
+    if result is not None:
+        savings = result.get("city_savings", {})
+        return CitySavingsResponse(
+            date=target_date,
+            city="Pune (PMC)",
+            distance_saved_km=savings.get("distance_saved_km", 0.0),
+            distance_saved_pct=savings.get("distance_saved_pct", 0.0),
+            diesel_saved_litres=savings.get("diesel_saved_litres", 0.0),
+            total_cost_saved_inr=savings.get("total_cost_saved_inr", 0.0),
+            co2_avoided_kg=savings.get("co2_avoided_kg", 0.0),
+            stops_skipped=savings.get("stops_skipped", 0),
+            overflow_bins_eliminated=savings.get("overflow_delta", 0),
+            total_wards=result.get("total_wards_optimized", 15),
+        )
 
-    if comparison is None:
-        from .optimize import run_full_city_optimization
-        comparison = run_full_city_optimization(target_date)
-
-    savings = comparison.get("city_savings", {})
-
-    return CitySavingsResponse(
-        date=target_date,
-        city="Pune (PMC)",
-        distance_saved_km=savings.get("distance_saved_km", 0.0),
-        distance_saved_pct=savings.get("distance_saved_pct", 0.0),
-        diesel_saved_litres=savings.get("diesel_saved_litres", 0.0),
-        total_cost_saved_inr=savings.get("total_cost_saved_inr", 0.0),
-        co2_avoided_kg=savings.get("co2_avoided_kg", 0.0),
-        stops_skipped=savings.get("stops_skipped", 0),
-        overflow_bins_eliminated=savings.get("overflow_delta", 0),
-        total_wards=comparison.get("total_wards_optimized", 15),
-    )
+    return JSONResponse(status_code=202, content=status_info)
 
 
 # ---------------------------------------------------------------------------

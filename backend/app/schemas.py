@@ -157,6 +157,13 @@ class RoutePlanResponse(BaseModel):
     ward_results: dict[str, ZoneRouteComparison]
 
 
+class OptimizationJobStatus(BaseModel):
+    """Job status returned when an optimization run is executing in background."""
+    status: str = "in_progress"
+    date: str
+    message: str = "Optimization is computing in background worker off the event loop."
+
+
 # ---------------------------------------------------------------------------
 # City-wide savings summary
 # ---------------------------------------------------------------------------

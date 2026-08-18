@@ -267,3 +267,29 @@ class TestRoutesEndpoint:
         assert "city_savings" in data
         assert "ward_results" in data
         assert len(data["ward_results"]) == 15
+
+    def test_routes_cache_miss_returns_job_status(self, monkeypatch):
+        from app import main
+        monkeypatch.setattr(main, "ROUTES_PATH", Path("non_existent_routes.json"))
+        monkeypatch.setattr(main, "_run_optimization_sync", lambda d: {})
+        response = client.get(
+            "/api/routes/comparison", params={"date": "2099-01-01"}
+        )
+        assert response.status_code == 202
+        data = response.json()
+        assert data["status"] == "in_progress"
+        assert data["date"] == "2099-01-01"
+        assert "message" in data
+
+    def test_savings_cache_miss_returns_job_status(self, monkeypatch):
+        from app import main
+        monkeypatch.setattr(main, "ROUTES_PATH", Path("non_existent_routes.json"))
+        monkeypatch.setattr(main, "_run_optimization_sync", lambda d: {})
+        response = client.get(
+            "/api/stats/savings", params={"date": "2099-01-01"}
+        )
+        assert response.status_code == 202
+        data = response.json()
+        assert data["status"] == "in_progress"
+        assert data["date"] == "2099-01-01"
+        assert "message" in data
