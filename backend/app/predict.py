@@ -184,7 +184,13 @@ def predict_stop_fills(
     Returns:
         List of dicts with stop_id, zone_id, predicted_fill_pct, urgency, etc.
     """
-    from .simulate import get_event_multiplier
+    try:
+        from .simulate import get_event_multiplier
+    except (ImportError, ValueError):
+        try:
+            from app.simulate import get_event_multiplier
+        except (ImportError, ValueError):
+            from simulate import get_event_multiplier
 
     if stops is None:
         with open(STOPS_PATH, "r", encoding="utf-8") as f:

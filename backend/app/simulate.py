@@ -215,7 +215,13 @@ def run_simulation():
     print(f"[INFO] Loaded {len(stops)} stops from {STOPS_PATH}")
 
     # Build zone -> density map from WARD_METADATA in data_loader
-    from .data_loader import WARD_METADATA
+    try:
+        from .data_loader import WARD_METADATA
+    except (ImportError, ValueError):
+        try:
+            from app.data_loader import WARD_METADATA
+        except (ImportError, ValueError):
+            from data_loader import WARD_METADATA
     density_map = {m["id"]: m["density"] for m in WARD_METADATA}
 
     records = simulate_fill_history(stops, n_days=60, density_map=density_map)

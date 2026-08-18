@@ -55,6 +55,10 @@ jobs:
           python backend/app/simulate.py
           python backend/app/predict.py
 
+      - name: Verify Phase 3 Route Optimization Pipeline
+        run: |
+          python backend/app/optimize.py
+
       - name: Run Pytest Suite
         run: |
           python -m pytest

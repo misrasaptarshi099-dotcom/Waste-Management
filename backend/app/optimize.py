@@ -101,7 +101,13 @@ def solve_static_route(
     # Return to depot
     route.append(0)
 
-    from .utils.distance import total_route_distance_km
+    try:
+        from .utils.distance import total_route_distance_km
+    except (ImportError, ValueError):
+        try:
+            from app.utils.distance import total_route_distance_km
+        except (ImportError, ValueError):
+            from utils.distance import total_route_distance_km
     total_km = total_route_distance_km(route, distance_matrix)
 
     return {
@@ -201,7 +207,13 @@ def solve_dynamic_route_ortools(
                                 num_vehicles, vehicle_capacity)
 
     # Extract routes
-    from .utils.distance import total_route_distance_km
+    try:
+        from .utils.distance import total_route_distance_km
+    except (ImportError, ValueError):
+        try:
+            from app.utils.distance import total_route_distance_km
+        except (ImportError, ValueError):
+            from utils.distance import total_route_distance_km
 
     all_routes = []
     grand_total_km = 0.0
@@ -255,7 +267,13 @@ def _greedy_fallback(
     Nearest-neighbour greedy CVRP fallback when OR-Tools is not installed.
     Splits stops into vehicle loads respecting capacity constraints.
     """
-    from .utils.distance import total_route_distance_km
+    try:
+        from .utils.distance import total_route_distance_km
+    except (ImportError, ValueError):
+        try:
+            from app.utils.distance import total_route_distance_km
+        except (ImportError, ValueError):
+            from utils.distance import total_route_distance_km
 
     n = len(distance_matrix)
     assigned = [False] * n
@@ -383,7 +401,13 @@ def run_zone_optimization(
     Returns:
         dict containing static_route, dynamic_route, savings, metadata.
     """
-    from .utils.distance import build_distance_matrix
+    try:
+        from .utils.distance import build_distance_matrix
+    except (ImportError, ValueError):
+        try:
+            from app.utils.distance import build_distance_matrix
+        except (ImportError, ValueError):
+            from utils.distance import build_distance_matrix
 
     # Load stops for this zone
     if all_stops is None:
@@ -408,7 +432,13 @@ def run_zone_optimization(
 
     # Get predicted fills
     if predicted_fills is None:
-        from .predict import predict_stop_fills
+        try:
+            from .predict import predict_stop_fills
+        except (ImportError, ValueError):
+            try:
+                from app.predict import predict_stop_fills
+            except (ImportError, ValueError):
+                from predict import predict_stop_fills
         predicted_fills = predict_stop_fills(date_str)
 
     # Map fill predictions to zone stops
@@ -519,7 +549,13 @@ def run_full_city_optimization(date_str: str) -> dict:
     Returns:
         dict with per-zone results and city-wide aggregated metrics.
     """
-    from .predict import predict_stop_fills
+    try:
+        from .predict import predict_stop_fills
+    except (ImportError, ValueError):
+        try:
+            from app.predict import predict_stop_fills
+        except (ImportError, ValueError):
+            from predict import predict_stop_fills
 
     predicted_fills = predict_stop_fills(date_str)
 
