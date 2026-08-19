@@ -216,7 +216,18 @@ async def _get_or_schedule_optimization(
     if target_date in _routes_cache_by_date:
         return _routes_cache_by_date[target_date], None
 
-    # 2. Check disk cache
+    # 2. Check per-date disk cache
+    date_file = DATA_OUTPUTS / f"routes_{target_date}.json"
+    if date_file.exists():
+        try:
+            with open(date_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            _routes_cache_by_date[target_date] = cached
+            return cached, None
+        except Exception:
+            pass
+
+    # 3. Check fallback main routes_comparison.json
     if ROUTES_PATH.exists():
         try:
             with open(ROUTES_PATH, "r", encoding="utf-8") as f:
@@ -227,7 +238,7 @@ async def _get_or_schedule_optimization(
         except Exception:
             pass
 
-    # 3. Check if a background job is already in flight for this date (deduplication)
+    # 4. Check if a background job is already in flight for this date (deduplication)
     existing_task = _active_optimization_tasks.get(target_date)
     if existing_task and not existing_task.done():
         return None, {
@@ -236,7 +247,7 @@ async def _get_or_schedule_optimization(
             "message": "Optimization job is currently in progress off the event loop.",
         }
 
-    # 4. Schedule new optimization job off the event loop
+    # 5. Schedule new optimization job off the event loop
     loop = asyncio.get_running_loop()
 
     async def _worker():
@@ -244,6 +255,12 @@ async def _get_or_schedule_optimization(
             res = await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
             if res:
                 _routes_cache_by_date[target_date] = res
+                # Persist to per-date disk cache for subsequent runs
+                try:
+                    with open(DATA_OUTPUTS / f"routes_{target_date}.json", "w", encoding="utf-8") as f:
+                        json.dump(res, f, indent=2)
+                except Exception:
+                    pass
             return res
         finally:
             _active_optimization_tasks.pop(target_date, None)
