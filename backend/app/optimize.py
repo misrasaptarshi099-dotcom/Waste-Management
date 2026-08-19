@@ -574,6 +574,21 @@ def run_full_city_optimization(date_str: str) -> dict:
 
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
+    if not zones:
+        # No zones loaded — return valid zero-ward result directly
+        city_savings = compute_savings_deltas(0.0, 0.0, 0, 0, 0, 0)
+        output = {
+            "date": date_str,
+            "city": "Pune (PMC)",
+            "total_wards_optimized": 0,
+            "city_savings": city_savings,
+            "ward_results": {},
+        }
+        DATA_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+        with open(ROUTES_OUTPUT_PATH, "w", encoding="utf-8") as f:
+            json.dump(output, f, indent=2, default=str)
+        return output
+
     def _solve_single_zone(zone_id):
         return zone_id, run_zone_optimization(zone_id, date_str, predicted_fills, all_stops)
 

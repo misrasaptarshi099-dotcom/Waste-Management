@@ -16,22 +16,23 @@ export default function FleetLogistics({ routesData, selectedZone, onDispatchFle
 
       wData.dynamic_route.routes.forEach((r, rIdx) => {
         const capacityKg = 4000;
-        const loadKg = r.load_kg || Math.round(Math.random() * 2200 + 1500);
-        const loadPct = Math.min(100, Math.round((loadKg / capacityKg) * 100));
+        const loadKg = r.load_kg ?? 0;
+        const loadPct = capacityKg > 0 ? Math.min(100, Math.round((loadKg / capacityKg) * 100)) : 0;
+        const stopsCount = r.stops ? r.stops.length : 0;
 
         list.push({
           id: `SR-${wId.replace('PUNE_', '')}-${r.vehicle_id}`,
           wardId: wId,
           vehicleNum: r.vehicle_id,
           model: 'Tata Ace Gold 4.0T Compactor',
-          driverName: `Driver ${String.fromCharCode(65 + (wIdx * 5 + rIdx) % 26)} (${wId})`,
-          status: loadPct >= 85 ? 'Returning to Depot' : 'On Route',
+          driverName: `Crew ${r.vehicle_id} (${wId})`,
+          status: loadPct >= 85 ? 'Returning to Depot' : stopsCount > 0 ? 'On Route' : 'Idle',
           loadKg: loadKg,
           capacityKg: capacityKg,
           loadPct: loadPct,
-          distanceKm: r.distance_km || 14.2,
-          stopsServed: r.stops ? r.stops.length : 18,
-          totalStops: (r.stops ? r.stops.length : 18) + 4,
+          distanceKm: r.distance_km ?? 0,
+          stopsServed: stopsCount,
+          totalStops: stopsCount,
         });
       });
     });

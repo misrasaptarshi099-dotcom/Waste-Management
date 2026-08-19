@@ -255,10 +255,24 @@ async def _get_or_schedule_optimization(
             res = await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
             if res:
                 _routes_cache_by_date[target_date] = res
-                # Persist to per-date disk cache for subsequent runs
+                # Persist to per-date disk cache atomically (write tmp then rename)
                 try:
-                    with open(DATA_OUTPUTS / f"routes_{target_date}.json", "w", encoding="utf-8") as f:
-                        json.dump(res, f, indent=2)
+                    import tempfile
+                    target_path = DATA_OUTPUTS / f"routes_{target_date}.json"
+                    DATA_OUTPUTS.mkdir(parents=True, exist_ok=True)
+                    fd, tmp_path = tempfile.mkstemp(
+                        suffix=".json", dir=str(DATA_OUTPUTS)
+                    )
+                    try:
+                        with os.fdopen(fd, "w", encoding="utf-8") as f:
+                            json.dump(res, f, indent=2)
+                        os.replace(tmp_path, str(target_path))
+                    except Exception:
+                        try:
+                            os.unlink(tmp_path)
+                        except OSError:
+                            pass
+                        raise
                 except Exception:
                     pass
             return res

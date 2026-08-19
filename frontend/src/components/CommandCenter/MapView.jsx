@@ -201,32 +201,21 @@ export default function MapView({
       };
     }
 
-    // Fallback scaling if ward_results is pending
-    const fraction = selectedWards.length / 15;
-    const baseStaticKm = 365.2 * fraction;
-    const baseSavedKm = 65.06 * fraction;
-    const baseDieselSaved = 11.83 * fraction;
-    const baseCostSaved = 1673 * fraction;
-    const baseCo2Saved = 31.7 * fraction;
-    const baseSkipped = Math.round(95 * fraction);
-    const baseStaticDiesel = baseStaticKm / 5.5;
-    const baseStaticCost = (baseStaticDiesel * 94.72) + (baseStaticKm * 8.5);
-    const baseStaticCo2 = baseStaticDiesel * 2.68;
-
+    // Pending — return zeros so KPI cards show 0 instead of invented metrics
     return {
-      distance_saved_km: Number(baseSavedKm.toFixed(2)),
-      distance_saved_pct: 17.8,
-      diesel_saved_litres: Number(baseDieselSaved.toFixed(2)),
-      total_cost_saved_inr: Number(baseCostSaved.toFixed(2)),
-      co2_avoided_kg: Number(baseCo2Saved.toFixed(2)),
-      stops_skipped: baseSkipped,
-      static_distance_km: Number(baseStaticKm.toFixed(2)),
-      dynamic_distance_km: Number((baseStaticKm - baseSavedKm).toFixed(2)),
-      static_diesel_litres: Number(baseStaticDiesel.toFixed(2)),
-      static_cost_inr: Number(baseStaticCost.toFixed(2)),
-      static_co2_kg: Number(baseStaticCo2.toFixed(2)),
-      total_stops: Math.round(429 * fraction),
-      active_stops: Math.round(334 * fraction),
+      distance_saved_km: 0,
+      distance_saved_pct: 0,
+      diesel_saved_litres: 0,
+      total_cost_saved_inr: 0,
+      co2_avoided_kg: 0,
+      stops_skipped: 0,
+      static_distance_km: 0,
+      dynamic_distance_km: 0,
+      static_diesel_litres: 0,
+      static_cost_inr: 0,
+      static_co2_kg: 0,
+      total_stops: 0,
+      active_stops: 0,
     };
   }, [selectedWards, routesData]);
 
@@ -235,7 +224,7 @@ export default function MapView({
     if (!stopsData) return [];
     const list = Array.isArray(stopsData) ? stopsData : (stopsData.stops || []);
     if (!list || list.length === 0) return [];
-    if (!selectedWards || selectedWards.length === 0) return list;
+    if (!selectedWards || selectedWards.length === 0) return [];
     return list.filter(s => selectedWards.includes(s.zone_id));
   }, [stopsData, selectedWards]);
 

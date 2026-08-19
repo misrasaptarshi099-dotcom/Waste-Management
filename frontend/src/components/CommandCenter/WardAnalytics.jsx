@@ -31,22 +31,25 @@ export default function WardAnalytics({ routesData, zonesData, onSelectWard }) {
         area_sqkm: p.area_sqkm,
         density: p.population_density,
         total_stops: p.n_stops,
-        active_stops: wResult ? wResult.active_stops_count : Math.round(p.n_stops * 0.75),
-        static_km: savings ? savings.static_distance_km : 24.5,
-        dynamic_km: savings ? savings.dynamic_distance_km : 19.2,
-        saved_km: savings ? savings.distance_saved_km : 5.3,
-        saved_pct: savings ? savings.distance_saved_pct : 21.6,
-        cost_saved_inr: savings ? savings.total_cost_saved_inr : 110.5,
-        diesel_saved_l: savings ? savings.diesel_saved_litres : 0.96,
-        efficiency_pct: Math.min(96, Math.max(65, Math.round(100 - (savings ? savings.distance_saved_pct * 0.8 : 15)))),
+        active_stops: wResult ? wResult.active_stops_count : null,
+        static_km: savings ? savings.static_distance_km : null,
+        dynamic_km: savings ? savings.dynamic_distance_km : null,
+        saved_km: savings ? savings.distance_saved_km : null,
+        saved_pct: savings ? savings.distance_saved_pct : null,
+        cost_saved_inr: savings ? savings.total_cost_saved_inr : null,
+        diesel_saved_l: savings ? savings.diesel_saved_litres : null,
+        efficiency_pct: (savings && savings.static_distance_km > 0)
+          ? Math.min(96, Math.max(65, Math.round((1 - savings.dynamic_distance_km / savings.static_distance_km) * 100)))
+          : null,
       };
     });
   }, [zonesData, routesData]);
 
+  const term = searchTerm.toLowerCase();
   const filteredWards = wardRows.filter(w => 
-    w.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    w.zone_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    w.day.toLowerCase().includes(searchTerm.toLowerCase())
+    (w.name || '').toLowerCase().includes(term) ||
+    (w.zone_id || '').toLowerCase().includes(term) ||
+    (w.day || '').toLowerCase().includes(term)
   );
 
   const exportCSV = () => {
@@ -163,13 +166,13 @@ export default function WardAnalytics({ routesData, zonesData, onSelectWard }) {
 
               <div>
                 <div className="font-mono text-3xl font-bold text-on-background">
-                  {w.efficiency_pct}%
+                  {w.efficiency_pct != null ? `${w.efficiency_pct}%` : '—'}
                 </div>
                 <div className="text-xs text-muted-taupe font-sans mt-0.5">{w.name}</div>
               </div>
 
               <div className="text-[11px] font-mono text-terracotta font-semibold">
-                -{w.saved_pct.toFixed(1)}% Distance Delta
+                {w.saved_pct != null ? `-${w.saved_pct.toFixed(1)}% Distance Delta` : 'Data pending'}
               </div>
             </div>
           ))}
@@ -213,13 +216,13 @@ export default function WardAnalytics({ routesData, zonesData, onSelectWard }) {
                       </span>
                     </td>
                     <td className="py-3 text-right font-mono text-slate-700">
-                      <span className="font-bold text-secondary">{w.active_stops}</span>/{w.total_stops}
+                      <span className="font-bold text-secondary">{w.active_stops ?? '—'}</span>/{w.total_stops}
                     </td>
                     <td className="py-3 text-right font-mono text-terracotta font-bold">
-                      -{w.saved_pct.toFixed(1)}%
+                      {w.saved_pct != null ? `-${w.saved_pct.toFixed(1)}%` : '—'}
                     </td>
                     <td className="py-3 text-right font-mono text-primary font-semibold">
-                      ₹{Math.round(w.cost_saved_inr)}
+                      {w.cost_saved_inr != null ? `₹${Math.round(w.cost_saved_inr)}` : '—'}
                     </td>
                     <td className="py-3 text-center">
                       <button

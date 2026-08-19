@@ -56,49 +56,64 @@ function CommandCenter() {
 
   // Date-specific data fetch
   useEffect(() => {
-    let isCancelled = false;
+    const controller = new AbortController();
+    const { signal } = controller;
 
     async function loadDateData() {
       setIsLoading(true);
       setErrorMessage(null);
 
       // 1. Fetch stops immediately (sub-50ms) to ensure pins are always visible
-      fetchStops(currentDate)
+      const stopsPromise = fetchStops(currentDate, { signal })
         .then((stopsRes) => {
-          if (!isCancelled && stopsRes) {
+          if (!signal.aborted && stopsRes) {
             setStops(stopsRes);
           }
         })
-        .catch((err) => console.warn('[App] Stops fetch notice:', err.message));
+        .catch((err) => {
+          if (!signal.aborted) {
+            console.warn('[App] Stops fetch notice:', err.message);
+            setErrorMessage(`Stops: ${err.message}`);
+          }
+        });
 
       // 2. Fetch routes and savings in parallel with retry
       try {
         const [routesRes, savingsRes] = await Promise.all([
-          fetchRoutesComparison(currentDate).catch((err) => {
-            console.warn('[App] Routes comparison notice:', err.message);
+          fetchRoutesComparison(currentDate, { signal }).catch((err) => {
+            if (!signal.aborted) {
+              console.warn('[App] Routes comparison notice:', err.message);
+              setErrorMessage((prev) => prev ? `${prev}; Routes: ${err.message}` : `Routes: ${err.message}`);
+            }
             return null;
           }),
-          fetchSavings(currentDate).catch((err) => {
-            console.warn('[App] Savings fetch notice:', err.message);
+          fetchSavings(currentDate, { signal }).catch((err) => {
+            if (!signal.aborted) {
+              console.warn('[App] Savings fetch notice:', err.message);
+              setErrorMessage((prev) => prev ? `${prev}; Savings: ${err.message}` : `Savings: ${err.message}`);
+            }
             return null;
           }),
         ]);
 
-        if (!isCancelled) {
+        if (!signal.aborted) {
           if (routesRes) setRoutes(routesRes);
           if (savingsRes) setSavings(savingsRes);
         }
       } catch (err) {
-        if (!isCancelled) {
+        if (!signal.aborted) {
           console.error('[App] Failed to fetch date data:', err.message);
+          setErrorMessage(`API sync: ${err.message}`);
         }
       } finally {
-        if (!isCancelled) setIsLoading(false);
+        // Wait for stops to settle before clearing loading state
+        await stopsPromise;
+        if (!signal.aborted) setIsLoading(false);
       }
     }
 
     loadDateData();
-    return () => { isCancelled = true; };
+    return () => { controller.abort(); };
   }, [currentDate]);
 
   return (

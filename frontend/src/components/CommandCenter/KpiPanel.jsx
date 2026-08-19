@@ -2,16 +2,24 @@ import React from 'react';
 import { TrendingDown, Fuel, IndianRupee, Leaf, CheckCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 export default function KpiPanel({ savings, isLoading }) {
+  if (!savings && !isLoading) {
+    return (
+      <div className="w-full text-center py-8 text-slate-500 font-mono text-sm">
+        Optimization data unavailable. Select a date to run the CVRP solver.
+      </div>
+    );
+  }
+
   const metrics = savings || {
-    distance_saved_km: 64.01,
-    distance_saved_pct: 17.5,
-    diesel_saved_litres: 11.64,
-    total_cost_saved_inr: 1646.45,
-    co2_avoided_kg: 31.19,
-    stops_skipped: 103,
-    overflow_delta: 261,
-    static_stops: 429,
-    dynamic_stops: 326,
+    distance_saved_km: 0,
+    distance_saved_pct: 0,
+    diesel_saved_litres: 0,
+    total_cost_saved_inr: 0,
+    co2_avoided_kg: 0,
+    stops_skipped: 0,
+    overflow_delta: 0,
+    static_stops: 0,
+    dynamic_stops: 0,
   };
 
   return (

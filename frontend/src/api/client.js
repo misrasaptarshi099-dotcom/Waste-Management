@@ -23,43 +23,47 @@ export async function fetchZones() {
   return await res.json();
 }
 
-export async function fetchStops(dateStr) {
-  const url = dateStr ? `${API_BASE}/api/stops?date=${dateStr}` : `${API_BASE}/api/stops`;
-  const res = await fetch(url);
+export async function fetchStops(dateStr, { signal } = {}) {
+  const url = dateStr
+    ? `${API_BASE}/api/stops?date=${encodeURIComponent(dateStr)}`
+    : `${API_BASE}/api/stops`;
+  const res = await fetch(url, { signal });
   if (!res.ok) throw new Error(`Failed to fetch stops: HTTP ${res.status}`);
   return await res.json();
 }
 
-export async function fetchRoutesComparison(dateStr) {
-  const url = dateStr ? `${API_BASE}/api/routes/comparison?date=${dateStr}` : `${API_BASE}/api/routes/comparison`;
+/**
+ * Shared 202-polling helper used by routes and savings endpoints.
+ * Polls up to `maxAttempts` times at `delayMs` intervals while the server
+ * returns HTTP 202 (optimization in progress).
+ */
+async function pollUntilReady(url, label, { signal, maxAttempts = 45, delayMs = 800 } = {}) {
   let attempts = 0;
-  while (attempts < 45) {
-    const res = await fetch(url);
+  while (attempts < maxAttempts) {
+    const res = await fetch(url, { signal });
     if (res.status === 202) {
       attempts++;
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, delayMs));
       continue;
     }
-    if (!res.ok) throw new Error(`Failed to fetch routes: HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`Failed to fetch ${label}: HTTP ${res.status}`);
     return await res.json();
   }
-  throw new Error('Route optimization job timed out.');
+  throw new Error(`${label} timed out.`);
 }
 
-export async function fetchSavings(dateStr) {
-  const url = dateStr ? `${API_BASE}/api/stats/savings?date=${dateStr}` : `${API_BASE}/api/stats/savings`;
-  let attempts = 0;
-  while (attempts < 45) {
-    const res = await fetch(url);
-    if (res.status === 202) {
-      attempts++;
-      await new Promise(r => setTimeout(r, 800));
-      continue;
-    }
-    if (!res.ok) throw new Error(`Failed to fetch savings: HTTP ${res.status}`);
-    return await res.json();
-  }
-  throw new Error('Savings calculation timed out.');
+export async function fetchRoutesComparison(dateStr, { signal } = {}) {
+  const url = dateStr
+    ? `${API_BASE}/api/routes/comparison?date=${encodeURIComponent(dateStr)}`
+    : `${API_BASE}/api/routes/comparison`;
+  return pollUntilReady(url, 'Route optimization', { signal });
+}
+
+export async function fetchSavings(dateStr, { signal } = {}) {
+  const url = dateStr
+    ? `${API_BASE}/api/stats/savings?date=${encodeURIComponent(dateStr)}`
+    : `${API_BASE}/api/stats/savings`;
+  return pollUntilReady(url, 'Savings calculation', { signal });
 }
 
 export async function fetchCitizenLookup(zoneId) {
