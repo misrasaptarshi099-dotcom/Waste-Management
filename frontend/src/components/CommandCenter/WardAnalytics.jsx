@@ -52,31 +52,46 @@ export default function WardAnalytics({ routesData, zonesData, onSelectWard }) {
     (w.day || '').toLowerCase().includes(term)
   );
 
+  const escapeCsvField = (val) => {
+    if (val == null) return '""';
+    const str = String(val);
+    if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return `"${str}"`;
+  };
+
   const exportCSV = () => {
     const headers = ['Ward ID', 'Ward Name', 'Day', 'Area (sqkm)', 'Total Stops', 'Dispatched Stops', 'Static Distance (km)', 'Dynamic Distance (km)', 'Saved Distance (km)', 'Efficiency (%)', 'Cost Saved (INR)'];
     const rows = filteredWards.map(w => [
-      w.zone_id,
-      `"${w.name}"`,
-      w.day,
-      w.area_sqkm,
-      w.total_stops,
-      w.active_stops,
-      w.static_km,
-      w.dynamic_km,
-      w.saved_km,
-      w.efficiency_pct,
-      w.cost_saved_inr
+      escapeCsvField(w.zone_id),
+      escapeCsvField(w.name),
+      escapeCsvField(w.day),
+      escapeCsvField(w.area_sqkm),
+      escapeCsvField(w.total_stops),
+      escapeCsvField(w.active_stops ?? '—'),
+      escapeCsvField(w.static_km ?? '—'),
+      escapeCsvField(w.dynamic_km ?? '—'),
+      escapeCsvField(w.saved_km ?? '—'),
+      escapeCsvField(w.efficiency_pct != null ? `${w.efficiency_pct}%` : '—'),
+      escapeCsvField(w.cost_saved_inr != null ? Math.round(w.cost_saved_inr) : '—')
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.map(escapeCsvField).join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `pune_pmc_ward_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+    link.href = url;
+    link.download = `pune_pmc_ward_analytics_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
+
+  // Derive top 2 hotspot wards dynamically from data
+  const topActiveWard = wardRows.slice().sort((a, b) => (b.active_stops || 0) - (a.active_stops || 0))[0];
+  const topSavingsWard = wardRows.slice().sort((a, b) => (b.saved_pct || 0) - (a.saved_pct || 0))[0];
 
   return (
     <div className="w-full max-w-7xl mx-auto py-6 flex flex-col md:flex-row gap-8 lg:gap-12">
@@ -107,16 +122,28 @@ export default function WardAnalytics({ routesData, zonesData, onSelectWard }) {
             <div className="p-3.5 rounded-2xl bg-background-cream border border-outline-variant/30 flex items-start gap-3 hover:scale-[1.01] transition-transform">
               <div className="w-2.5 h-2.5 rounded-full bg-terracotta mt-1.5 flex-shrink-0 animate-pulse"></div>
               <div>
-                <h4 className="font-bold text-xs text-on-background">FC Road Corridor — Critical</h4>
-                <p className="text-[11px] text-muted-taupe mt-0.5">Commercial bins at 88% capacity. Priority tipper dispatched.</p>
+                <h4 className="font-bold text-xs text-on-background">
+                  {topActiveWard ? `${topActiveWard.name} (${topActiveWard.zone_id}) — High Load` : 'Central Commercial Corridor — Critical'}
+                </h4>
+                <p className="text-[11px] text-muted-taupe mt-0.5">
+                  {topActiveWard && topActiveWard.active_stops != null
+                    ? `${topActiveWard.active_stops} of ${topActiveWard.total_stops} stops require immediate collection. Active dispatch deployed.`
+                    : 'Commercial bins at elevated capacity. Priority tipper dispatched.'}
+                </p>
               </div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-background-cream border border-outline-variant/30 flex items-start gap-3 hover:scale-[1.01] transition-transform">
               <div className="w-2.5 h-2.5 rounded-full bg-secondary mt-1.5 flex-shrink-0"></div>
               <div>
-                <h4 className="font-bold text-xs text-on-background">Kothrud Haat — Surging</h4>
-                <p className="text-[11px] text-muted-taupe mt-0.5">Mandi haulage +2.2x. Second pass vehicle queued for 11:30 AM.</p>
+                <h4 className="font-bold text-xs text-on-background">
+                  {topSavingsWard ? `${topSavingsWard.name} (${topSavingsWard.zone_id}) — Optimal Pruning` : 'Market Corridor — Surging'}
+                </h4>
+                <p className="text-[11px] text-muted-taupe mt-0.5">
+                  {topSavingsWard && topSavingsWard.saved_pct != null
+                    ? `${topSavingsWard.saved_pct.toFixed(1)}% route distance saved via CVRP skip logic.`
+                    : 'Mandi haulage surge handled via optimized vehicle loops.'}
+                </p>
               </div>
             </div>
           </div>

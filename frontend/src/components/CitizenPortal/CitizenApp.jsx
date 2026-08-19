@@ -77,19 +77,33 @@ export default function CitizenApp() {
 
       {/* Ward Selection Row */}
       <div className="bg-surface-sand p-4 rounded-2xl border border-outline-variant/30 flex flex-col gap-2 shadow-sm">
-        <label className="font-mono text-[10px] uppercase text-muted-taupe tracking-wider font-bold">
+        <label htmlFor="ward-select" className="font-mono text-[10px] uppercase text-muted-taupe tracking-wider font-bold">
           {lang === 'mr' ? 'तुमचा प्रभाग निवडा' : 'Select Your Municipal Ward'}
         </label>
         <select
+          id="ward-select"
           value={selectedWard}
           onChange={(e) => setSelectedWard(e.target.value)}
           className="bg-background-cream text-on-background text-sm font-semibold rounded-xl px-3 py-2 border border-outline-variant/40 focus:outline-none focus:ring-1 focus:ring-primary"
         >
-          {PUNE_WARDS_LIST.map((w) => (
-            <option key={w.id} value={w.id}>
-              {w.id} — {lang === 'mr' ? w.nameMr : w.nameEn} ({w.day})
-            </option>
-          ))}
+          {PUNE_WARDS_LIST.map((w) => {
+            const dayNamesMr = {
+              'Mon': 'सोम',
+              'Tue': 'मंगळ',
+              'Wed': 'बुध',
+              'Thu': 'गुरू',
+              'Fri': 'शुक्र',
+              'Sat': 'शनि',
+              'Sun': 'रवि',
+              'Daily': 'दररोज',
+            };
+            const localizedDay = lang === 'mr' ? (dayNamesMr[w.day] || w.day) : w.day;
+            return (
+              <option key={w.id} value={w.id}>
+                {w.id} — {lang === 'mr' ? w.nameMr : w.nameEn} ({localizedDay})
+              </option>
+            );
+          })}
         </select>
       </div>
 
@@ -226,7 +240,11 @@ export default function CitizenApp() {
 
         {!reportSuccess ? (
           <form onSubmit={handleReportSubmit} className="flex flex-col gap-3">
+            <label htmlFor="complaint-input" className="font-mono text-[10px] uppercase text-muted-taupe tracking-wider font-bold">
+              {lang === 'mr' ? 'तक्रारीचे तपशील' : 'Complaint Details & Location'}
+            </label>
             <textarea
+              id="complaint-input"
               rows={3}
               required
               placeholder={lang === 'mr' ? 'कचराकुंडीचे स्थान किंवा वर्णन लिहा...' : 'Describe location or landmark of overflowing bin...'}
@@ -236,13 +254,14 @@ export default function CitizenApp() {
             />
 
             <div className="flex items-center gap-3">
-              <label className="flex-1 flex items-center justify-center gap-2 p-3 bg-background-cream hover:bg-surface-dim rounded-xl border border-dashed border-outline-variant/50 text-xs text-muted-taupe font-semibold cursor-pointer transition-colors">
+              <label className="flex-1 flex items-center justify-center gap-2 p-3 bg-background-cream hover:bg-surface-dim rounded-xl border border-dashed border-outline-variant/50 text-xs text-muted-taupe font-semibold cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-primary">
                 <Camera className="w-4 h-4 text-primary" />
                 <span>{photoAttached ? (lang === 'mr' ? 'फोटो जोडला गेला' : 'Photo Attached') : (lang === 'mr' ? 'फोटो जोडा' : 'Attach Photo')}</span>
                 <input
                   type="file"
                   accept="image/*"
-                  className="hidden"
+                  aria-label={lang === 'mr' ? 'फोटो अपलोड करा' : 'Upload photo of overflowing bin'}
+                  className="sr-only"
                   onChange={() => setPhotoAttached(true)}
                 />
               </label>

@@ -20,6 +20,7 @@ export default function Header({ activeTab, setActiveTab, healthStatus }) {
   }, []);
 
   const formattedTime = time.toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -27,6 +28,7 @@ export default function Header({ activeTab, setActiveTab, healthStatus }) {
   });
 
   const formattedDate = time.toLocaleDateString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -57,9 +59,10 @@ export default function Header({ activeTab, setActiveTab, healthStatus }) {
       </div>
 
       {/* Navigation Switcher (Stitch Pill Style) */}
-      <nav className="flex items-center bg-surface-sand p-1 rounded-full border border-outline-variant/40 shadow-sm">
+      <nav className="flex items-center bg-surface-sand p-1 rounded-full border border-outline-variant/40 shadow-sm" aria-label="Main Navigation">
         <button
           onClick={() => setActiveTab('gis')}
+          aria-current={activeTab === 'gis' ? 'page' : undefined}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
             activeTab === 'gis'
               ? 'bg-primary text-white shadow-md'
@@ -72,6 +75,7 @@ export default function Header({ activeTab, setActiveTab, healthStatus }) {
 
         <button
           onClick={() => setActiveTab('analytics')}
+          aria-current={activeTab === 'analytics' ? 'page' : undefined}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
             activeTab === 'analytics'
               ? 'bg-primary text-white shadow-md'
@@ -84,6 +88,7 @@ export default function Header({ activeTab, setActiveTab, healthStatus }) {
 
         <button
           onClick={() => setActiveTab('fleet')}
+          aria-current={activeTab === 'fleet' ? 'page' : undefined}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
             activeTab === 'fleet'
               ? 'bg-primary text-white shadow-md'

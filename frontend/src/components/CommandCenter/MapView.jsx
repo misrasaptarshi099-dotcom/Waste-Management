@@ -854,9 +854,12 @@ export default function MapView({
           {/* ── BOTTOM-RIGHT OVERLAY: Comprehensive Map Legend ── */}
           <div className="absolute bottom-28 md:bottom-24 right-4 z-10 max-w-[270px] bg-surface-sand/95 backdrop-blur-xl rounded-2xl border border-outline-variant/40 shadow-lg overflow-hidden transition-all">
             {/* Legend Header */}
-            <div 
+            <button
+              type="button"
               onClick={() => setIsLegendOpen(!isLegendOpen)}
-              className="px-3.5 py-2.5 bg-background-cream/80 flex items-center justify-between cursor-pointer border-b border-outline-variant/30 hover:bg-background-cream"
+              aria-expanded={isLegendOpen}
+              aria-label="Toggle map legend"
+              className="w-full px-3.5 py-2.5 bg-background-cream/80 flex items-center justify-between cursor-pointer border-b border-outline-variant/30 hover:bg-background-cream text-left transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <div className="flex items-center gap-1.5">
                 <Info className="w-3.5 h-3.5 text-primary" />
@@ -864,10 +867,10 @@ export default function MapView({
                   Map Legend
                 </span>
               </div>
-              <button className="text-muted-taupe hover:text-on-background">
+              <span className="text-muted-taupe hover:text-on-background">
                 {isLegendOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
-              </button>
-            </div>
+              </span>
+            </button>
 
             {/* Legend Body */}
             {isLegendOpen && (
