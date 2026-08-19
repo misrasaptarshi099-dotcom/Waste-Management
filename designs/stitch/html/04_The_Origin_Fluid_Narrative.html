@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fluid Narrative | The Origin</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS via CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#c6ebd5",
+                        "background": "#fff8f6",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#002114",
+                        "surface": "#fff8f6",
+                        "background-cream": "#FDFBF7",
+                        "tertiary-fixed": "#8bf6dc",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#fdf1ed",
+                        "secondary": "#446554",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#6ed9c1",
+                        "muted-taupe": "#8B7E76",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#e3d8d4",
+                        "on-secondary-container": "#486a58",
+                        "primary-container": "#b95745",
+                        "on-surface": "#201a18",
+                        "tertiary": "#006858",
+                        "inverse-on-surface": "#faeeeb",
+                        "on-tertiary-fixed-variant": "#005144",
+                        "outline": "#89726d",
+                        "surface-bright": "#fff8f6",
+                        "on-surface-variant": "#56423e",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-highest": "#ece0dd",
+                        "secondary-fixed-dim": "#aacfba",
+                        "inverse-surface": "#352f2d",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#ffdad3",
+                        "secondary-container": "#c3e8d2",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f7ebe8",
+                        "surface-sand": "#F5ECE3",
+                        "on-primary-fixed-variant": "#7e2b1c",
+                        "on-tertiary-container": "#f4fffa",
+                        "surface-variant": "#ece0dd",
+                        "on-background": "#201a18",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "primary": "#9a402f",
+                        "surface-container-high": "#f2e6e2",
+                        "tertiary-container": "#008470",
+                        "primary-fixed-dim": "#ffb4a5",
+                        "on-tertiary-fixed": "#00201a",
+                        "on-secondary-fixed-variant": "#2c4d3d",
+                        "on-primary-fixed": "#3f0300",
+                        "surface-tint": "#9d4231",
+                        "outline-variant": "#dcc0bb",
+                        "inverse-primary": "#ffb4a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "organic": "30% 70% 70% 30% / 30% 30% 70% 70%",
+                        "organic-hover": "45% 55% 45% 55% / 55% 45% 55% 45%"
+                    },
+                    "spacing": {
+                        "page-margin": "5vw",
+                        "gutter": "2rem",
+                        "interaction-radius": "24px",
+                        "section-gap": "8rem"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["notoSerif"],
+                        "button": ["dmSans"],
+                        "body-md": ["dmSans"],
+                        "label-md": ["dmSans"],
+                        "body-lg": ["dmSans"],
+                        "headline-lg-mobile": ["notoSerif"],
+                        "display-lg": ["notoSerif"],
+                        "display-xl": ["notoSerif"],
+                        "headline-md": ["notoSerif"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "button": ["16px", { "lineHeight": "100%", "fontWeight": "700" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "display-lg": ["80px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "display-xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "130%", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Styles for Fluid Organic Transitions & Grain */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .organic-transition {
+            transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Fade on scroll utility class */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .magnetic-btn {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .magnetic-btn-inner {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background-cream text-on-surface antialiased overflow-x-hidden selection:bg-surface-tint selection:text-on-primary">
+<!-- Global Grain Overlay -->
+<div class="grain-overlay"></div>
+<!-- Background Shader -->
+<div class="fixed inset-0 w-full h-full z-0 pointer-events-none opacity-40 mix-blend-multiply">
+<!-- STITCH_SHADER_START:ANIMATION_7 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_7" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_7');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+
+varying vec2 v_texCoord;
+
+// Simplified simplex noise-like function
+vec2 hash(vec2 p) {
+    p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+    return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+
+float noise(vec2 p) {
+    const float K1 = 0.366025404; // (sqrt(3)-1)/2;
+    const float K2 = 0.211324865; // (3-sqrt(3))/6;
+
+    vec2  i = floor(p + (p.x + p.y) * K1);
+    vec2  a = p - i + (i.x + i.y) * K2;
+    float m = step(a.y, a.x); 
+    vec2  o = vec2(m, 1.0 - m);
+    vec2  b = a - o + K2;
+	vec2  c = a - 1.0 + 2.0 * K2;
+
+    vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+	vec3 n = h * h * h * h * vec3(dot(a, hash(i + 0.0)), dot(b, hash(i + o)), dot(c, hash(i + 1.0)));
+
+    return dot(n, vec3(70.0));
+}
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Background color: Warm Cream (#FDFBF7)
+    vec3 color_bg = vec3(0.992, 0.984, 0.969);
+    
+    // Blob colors: Terracotta (#C25E4B) and Sage Green (#6B8E7B)
+    vec3 color_terracotta = vec3(0.761, 0.369, 0.294);
+    vec3 color_sage = vec3(0.420, 0.557, 0.482);
+    
+    // Animate noise over time
+    float n1 = noise(uv * 2.0 + u_time * 0.1);
+    float n2 = noise(uv * 3.0 - u_time * 0.15);
+    
+    float blob1 = smoothstep(0.1, 0.5, n1);
+    float blob2 = smoothstep(0.1, 0.5, n2);
+    
+    // Mix colors based on blobs
+    vec3 color = color_bg;
+    color = mix(color, color_terracotta, blob1 * 0.3);
+    color = mix(color, color_sage, blob2 * 0.2);
+    
+    // Add subtle grain/noise
+    float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+    color += (grain - 0.5) * 0.04;
+
+    gl_FragColor = vec4(color, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_7 -->
+</div>
+<!-- Top App Bar (Hidden on Mobile, Visible on md+) -->
+<header class="hidden md:flex justify-between items-center w-full px-page-margin py-8 fixed top-0 z-50 bg-transparent transition-opacity duration-500 hover:opacity-70" id="topAppBar">
+<div class="font-headline-md text-headline-md text-on-surface">Fluid Narrative</div>
+<div class="flex gap-6 items-center">
+<span class="material-symbols-outlined text-primary hover:opacity-70 cursor-pointer" data-weight="fill" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="material-symbols-outlined text-primary hover:opacity-70 cursor-pointer" data-weight="fill" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-32 pb-48 px-page-margin">
+<!-- Hero Section -->
+<section class="min-h-[819px] flex flex-col items-center justify-center text-center w-full fade-in-section is-visible">
+<h1 class="font-display-xl text-display-xl text-on-surface-variant mb-12 max-w-5xl tracking-tight">
+                The Story of <br/><span class="italic text-primary">Fluidity</span>
+</h1>
+<div class="magnetic-btn mt-12" id="exploreBtn">
+<div class="magnetic-btn-inner bg-surface-sand px-10 py-5 rounded-organic hover:rounded-organic-hover text-primary font-button text-button shadow-sm backdrop-blur-md transition-all duration-800 flex items-center justify-center gap-3">
+                    Explore The Archive
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+</section>
+<!-- Narrative Blocks -->
+<div class="w-full max-w-3xl flex flex-col gap-section-gap mt-32">
+<section class="fade-in-section text-center">
+<p class="font-body-lg text-body-lg text-muted-taupe leading-relaxed">
+                    We begin with the premise that digital spaces need not be rigid. Like ink on high-quality stock, or water shaping stone, form should flow naturally from intent.
+                </p>
+</section>
+<section class="fade-in-section flex flex-col md:flex-row gap-12 items-center">
+<div class="w-full md:w-1/2 aspect-[4/5] rounded-organic overflow-hidden shadow-sm relative">
+<img class="w-full h-full object-cover transition-transform duration-800 hover:scale-105" data-alt="A striking digital installation art piece featuring glowing, generative organic shapes suspended in a vast, minimalist gallery space. The room is illuminated by high-key, soft white lighting that creates a bright, modern light-mode aesthetic with earthy terracotta tones. The artwork relies on a sophisticated palette of deep blacks and pristine whites, punctuated by intense accents of vibrant red. The mood is serene yet technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFN0bwuLkPBlrRJWyh3irCKZZmT249GkM2TKMkPMkJt2KuWNjkze00BayjNB4o5vrjvTNqdzVerztu1tFaw7gjAneszZPdNubyjpNUHF4tgrJJpmsXxv9rGGiwG2i1fGqXiqt5VA40mdu2jYnnjRHrP5V-q9hwXyta47gi_X2mF3Fm7duqsxsImO6xqqyplMGrvptw12MiZ6NcU_7WHaxY5ZdcaJeInRExhAL5Qs-F7dyHTuE4u-wN"/>
+</div>
+<div class="w-full md:w-1/2 text-left">
+<h2 class="font-headline-lg text-headline-lg mb-6">Organic Matter</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Embracing shifting radii and asymmetrical balance to create interfaces that breathe. The tactile sensation of physical media, translated into fluid interactions.
+                    </p>
+</div>
+</section>
+<section class="fade-in-section text-center">
+<p class="font-body-lg text-body-lg text-muted-taupe leading-relaxed italic font-serif">
+                    "The beauty of a living archive is its resistance to static geometry. It morphs, it yields, it responds."
+                </p>
+</section>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Visible on Mobile & md for this specific intent, mapping to Journal) -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-center pb-8 pointer-events-auto">
+<div class="flex items-center gap-2 rounded-full backdrop-blur-xl bg-surface-sand/80 shadow-sm p-2 w-fit mx-auto transition-transform duration-800 hover:scale-105">
+<!-- Journal (Active) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 transition-colors duration-300">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-label-md text-label-md uppercase">Journal</span>
+</button>
+<!-- Archive (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 transition-colors duration-300 hover:text-primary">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">grid_view</span>
+<span class="font-label-md text-label-md uppercase">Archive</span>
+</button>
+<!-- Studio (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 transition-colors duration-300 hover:text-primary">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">brush</span>
+<span class="font-label-md text-label-md uppercase">Studio</span>
+</button>
+<!-- Contact (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 transition-colors duration-300 hover:text-primary">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">mail</span>
+<span class="font-label-md text-label-md uppercase">Contact</span>
+</button>
+</div>
+</nav>
+<!-- JavaScript for Interactions -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Scroll Fade In Observer
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-section').forEach((section) => {
+                observer.observe(section);
+            });
+
+            // Magnetic Button Effect
+            const magneticBtn = document.getElementById('exploreBtn');
+            const magneticInner = magneticBtn.querySelector('.magnetic-btn-inner');
+
+            magneticBtn.addEventListener('mousemove', (e) => {
+                const rect = magneticBtn.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Calculate pull strength (closer to center = less pull to allow click, edge = more pull)
+                const deltaX = (x - centerX) * 0.3;
+                const deltaY = (y - centerY) * 0.3;
+
+                magneticInner.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            });
+
+            magneticBtn.addEventListener('mouseleave', () => {
+                magneticInner.style.transform = `translate(0px, 0px)`;
+            });
+        });
+    </script>
+</body></html>

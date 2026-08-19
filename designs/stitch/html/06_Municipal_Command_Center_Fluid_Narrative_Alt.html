@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwachhRoute AI - Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&amp;family=Noto+Serif:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#fff8f6",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#352f2d",
+                    "on-secondary-fixed-variant": "#2c4d3d",
+                    "tertiary": "#006858",
+                    "on-primary-container": "#fffbff",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#56423e",
+                    "on-background": "#201a18",
+                    "surface": "#fff8f6",
+                    "on-tertiary-container": "#f4fffa",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#fdf1ed",
+                    "secondary-container": "#c3e8d2",
+                    "on-secondary-container": "#486a58",
+                    "primary-fixed-dim": "#ffb4a5",
+                    "background-cream": "#FDFBF7",
+                    "secondary-fixed": "#c6ebd5",
+                    "on-tertiary-fixed-variant": "#005144",
+                    "surface-bright": "#fff8f6",
+                    "inverse-on-surface": "#faeeeb",
+                    "outline": "#89726d",
+                    "surface-dim": "#e3d8d4",
+                    "secondary": "#446554",
+                    "muted-taupe": "#8B7E76",
+                    "tertiary-fixed-dim": "#6ed9c1",
+                    "inverse-primary": "#ffb4a5",
+                    "tertiary-container": "#008470",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#7e2b1c",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed": "#00201a",
+                    "surface-container-high": "#f2e6e2",
+                    "primary-fixed": "#ffdad3",
+                    "surface-variant": "#ece0dd",
+                    "tertiary-fixed": "#8bf6dc",
+                    "secondary-fixed-dim": "#aacfba",
+                    "outline-variant": "#dcc0bb",
+                    "on-secondary-fixed": "#002114",
+                    "surface-container": "#f7ebe8",
+                    "surface-container-highest": "#ece0dd",
+                    "surface-tint": "#9d4231",
+                    "on-surface": "#201a18",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#9a402f",
+                    "surface-sand": "#F5ECE3",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#3f0300",
+                    "primary-container": "#b95745",
+                    "terracotta": "#C25E4B",
+                    "sage-green": "#6B8E7B"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px",
+                    "organic": "60% 40% 30% 70% / 60% 30% 70% 40%"
+            },
+            "spacing": {
+                    "page-margin": "5vw",
+                    "interaction-radius": "24px",
+                    "gutter": "2rem",
+                    "section-gap": "8rem"
+            },
+            "fontFamily": {
+                    "button": ["dmSans"],
+                    "display-xl": ["notoSerif"],
+                    "body-lg": ["dmSans"],
+                    "headline-lg-mobile": ["notoSerif"],
+                    "headline-lg": ["notoSerif"],
+                    "display-lg": ["notoSerif"],
+                    "headline-md": ["notoSerif"],
+                    "label-md": ["dmSans"],
+                    "body-md": ["dmSans"],
+                    "kpi-label": ["Fraunces", "serif"],
+                    "kpi-value": ["JetBrains Mono", "monospace"]
+            },
+            "fontSize": {
+                    "button": ["16px", {"lineHeight": "100%", "fontWeight": "700"}],
+                    "display-xl": ["120px", {"lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400"}],
+                    "body-lg": ["20px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "120%", "fontWeight": "400"}],
+                    "headline-lg": ["48px", {"lineHeight": "120%", "fontWeight": "400"}],
+                    "display-lg": ["80px", {"lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "headline-md": ["32px", {"lineHeight": "130%", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                    "body-md": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background-cream');
+            color: theme('colors.on-background');
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Organic Masking */
+        .organic-mask {
+            clip-path: path('M100.0,20.0 C144.2,20.0 180.0,55.8 180.0,100.0 C180.0,144.2 144.2,180.0 100.0,180.0 C55.8,180.0 20.0,144.2 20.0,100.0 C20.0,55.8 55.8,20.0 100.0,20.0 Z');
+            /* Approximate SVG path for organic shape, simplified to border-radius for broader compatibility in standard CSS */
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            transition: border-radius 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .organic-mask:hover {
+            border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%;
+        }
+
+        /* Magnetic Interaction Base */
+        .magnetic {
+            transition: transform 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Smooth Scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Map Lines */
+        .path-static {
+            stroke-dasharray: 5, 5;
+            animation: dash 30s linear infinite;
+        }
+        
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+    </style>
+</head>
+<body class="antialiased min-h-screen relative flex flex-col items-center justify-center pt-24 pb-32 md:px-page-margin">
+<div class="grain-overlay"></div>
+<!-- Top AppBar (from JSON) -->
+<header class="flex justify-between items-center w-full px-page-margin py-8 fixed top-0 z-50 bg-transparent flat no shadows">
+<div class="font-headline-md text-headline-md text-on-surface dark:text-on-surface-variant font-bold tracking-tight">SwachhRoute AI</div>
+<div class="flex items-center gap-6 text-primary dark:text-primary-fixed-dim">
+<span class="material-symbols-outlined hover:opacity-70 transition-opacity duration-500 cursor-pointer" data-weight="fill" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="material-symbols-outlined hover:opacity-70 transition-opacity duration-500 cursor-pointer" data-weight="fill" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</div>
+</header>
+<!-- Main Content Layout -->
+<main class="w-full max-w-[1440px] flex flex-col md:flex-row gap-gutter h-[819px] relative z-10">
+<!-- Left Panel: Editorial KPIs & Actions (30%) -->
+<aside class="w-full md:w-[35%] flex flex-col gap-12 pr-8 sticky top-32 self-start h-full overflow-y-auto hidden-scrollbar">
+<div class="flex flex-col gap-8">
+<!-- KPI 1 -->
+<div class="flex flex-col border-b border-muted-taupe/30 pb-4">
+<span class="font-kpi-label text-sm text-on-surface-variant uppercase tracking-widest mb-2">Distance Saved</span>
+<span class="font-kpi-value text-4xl text-terracotta">-33.9%</span>
+</div>
+<!-- KPI 2 -->
+<div class="flex flex-col border-b border-muted-taupe/30 pb-4">
+<span class="font-kpi-label text-sm text-on-surface-variant uppercase tracking-widest mb-2">Fuel Saved</span>
+<span class="font-kpi-value text-4xl text-sage-green">42.6 L</span>
+</div>
+<!-- KPI 3 -->
+<div class="flex flex-col border-b border-muted-taupe/30 pb-4">
+<span class="font-kpi-label text-sm text-on-surface-variant uppercase tracking-widest mb-2">Diesel Cost Saved</span>
+<span class="font-kpi-value text-4xl text-primary">₹3,834</span>
+</div>
+</div>
+<!-- Organic Route Comparison Card -->
+<div class="bg-surface-sand p-8 organic-mask relative overflow-hidden flex flex-col gap-4">
+<h3 class="font-headline-md text-2xl text-on-background mb-2">Route Analysis</h3>
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-muted-taupe"></div>
+<span class="font-body-md text-on-surface-variant">Static Path (Inefficient)</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-terracotta"></div>
+<span class="font-body-md text-on-surface-variant">AI Dynamic (Optimized)</span>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="magnetic font-button text-button bg-terracotta text-on-primary py-4 px-8 rounded-full shadow-sm hover:opacity-90 transition-all w-fit mt-auto self-start">
+                Dispatch AI Fleet
+            </button>
+</aside>
+<!-- Right Panel: Map Container (70%) -->
+<section class="w-full md:w-[65%] h-full relative flex flex-col">
+<!-- Map Container with organic mask -->
+<div class="w-full h-full organic-mask relative overflow-hidden bg-surface-container-high">
+<!-- Placeholder map background representing GIS interface -->
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="A high-end, minimalist satellite map interface in light mode, featuring soft sage green city boundaries and muted taupe terrain lines. The map style is clean, uncluttered, and editorial, resembling an architectural rendering rather than a standard digital map tool. Warm cream tones dominate the background, avoiding any clinical or dark mode elements." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUbTxYgENCSBPavna8SEPGSH4k7uWMLXYPOff8vmlemGH_w6BRtq4pL6DwQtz62T7KHkl9cNRfy_cjcP6zDKtdlmoUeoy7SSVxbA1WEIIOVLuEiT78bita8FhGLmMrSTK6R7CRXuce1p4wqVPVomzJzL58qvaOL1hGirLhY2_uAChxO4RgdFZvZlpgiwF7qtnDCtXcRA6jrlwYlKxG-DDF_UlxbWvGZHo0c9t8xbHTbJ9HT2DJXBBX')">
+</div>
+<!-- Overlay SVG for Paths and Markers -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="xMidYMid slice" viewbox="0 0 1000 800">
+<!-- Ward Boundaries (Sage Green stroke) -->
+<path d="M 200 100 Q 400 50, 600 200 T 900 300 Q 800 600, 500 700 T 100 400 Z" fill="transparent" stroke="#6B8E7B" stroke-opacity="0.6" stroke-width="2"></path>
+<path d="M 300 300 Q 450 250, 550 400 T 400 600 Q 250 500, 300 300 Z" fill="transparent" stroke="#6B8E7B" stroke-dasharray="10,5" stroke-opacity="0.4" stroke-width="1.5"></path>
+<!-- Static Route (Muted Taupe dashed) -->
+<path class="path-static" d="M 250 150 L 400 200 L 500 100 L 700 250 L 600 400 L 800 500" fill="transparent" stroke="#8B7E76" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- AI Dynamic Route (Terracotta solid) -->
+<path d="M 250 150 Q 350 300, 550 250 T 800 500" fill="transparent" stroke="#C25E4B" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+<!-- Markers -->
+<!-- Start -->
+<circle cx="250" cy="150" fill="#446554" r="8"></circle>
+<!-- Nodes -->
+<circle cx="400" cy="200" fill="#8B7E76" r="5"></circle>
+<circle cx="500" cy="100" fill="#8B7E76" r="5"></circle>
+<circle cx="700" cy="250" fill="#8B7E76" r="5"></circle>
+<circle cx="600" cy="400" fill="#8B7E76" r="5"></circle>
+<!-- Dynamic Nodes -->
+<circle cx="450" cy="275" fill="#C25E4B" r="6"></circle>
+<!-- End -->
+<circle cx="800" cy="500" fill="#C25E4B" r="10"></circle>
+</svg>
+</div>
+<!-- Bottom Control: Simulation Scrubber -->
+<div class="mt-8 flex items-center justify-between bg-surface-sand/50 backdrop-blur-md rounded-full px-8 py-4 w-full">
+<span class="font-body-md text-on-surface-variant mr-4">Simulation Date:</span>
+<input class="w-full mx-4 h-1 bg-muted-taupe/30 rounded-lg appearance-none cursor-pointer accent-terracotta" max="30" min="1" type="range" value="15"/>
+<div class="flex items-center gap-3 ml-8">
+<span class="font-label-md text-on-surface-variant uppercase">Ganesh Chaturthi</span>
+<!-- Custom Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-muted-taupe/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terracotta"></div>
+</label>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Nav Pill (from JSON) -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-center pb-8 pointer-events-none">
+<div class="bg-surface-sand/80 dark:bg-surface-sand/80 rounded-full mb-8 mx-auto w-fit backdrop-blur-xl shadow-sm flex items-center p-2 pointer-events-auto">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 hover:scale-105 transition-transform duration-800 magnetic" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-label-md text-label-md">Journal</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 hover:scale-105 transition-transform duration-800 magnetic" href="#">
+<span class="material-symbols-outlined mb-1">grid_view</span>
+<span class="font-label-md text-label-md">Archive</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 hover:scale-105 transition-transform duration-800 magnetic" href="#">
+<span class="material-symbols-outlined mb-1">brush</span>
+<span class="font-label-md text-label-md">Studio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-6 py-2 hover:scale-105 transition-transform duration-800 magnetic" href="#">
+<span class="material-symbols-outlined mb-1">mail</span>
+<span class="font-label-md text-label-md">Contact</span>
+</a>
+</div>
+</nav>
+<script>
+        // Simple Magnetic Interaction Logic for '.magnetic' elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const magneticElements = document.querySelectorAll('.magnetic');
+            
+            magneticElements.forEach(elem => {
+                elem.addEventListener('mousemove', (e) => {
+                    const rect = elem.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    // Pull intensity based on interaction radius (approximate)
+                    elem.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+                });
+
+                elem.addEventListener('mouseleave', () => {
+                    elem.style.transform = `translate(0px, 0px)`;
+                });
+            });
+        });
+    </script>
+</body></html>

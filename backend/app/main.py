@@ -192,7 +192,8 @@ async def get_stops(
 # ---------------------------------------------------------------------------
 
 _active_optimization_tasks: dict[str, asyncio.Task] = {}
-_executor = ThreadPoolExecutor(max_workers=2)
+_routes_cache_by_date: dict[str, dict] = {}
+_executor = ThreadPoolExecutor(max_workers=4)
 
 
 def _run_optimization_sync(target_date: str) -> dict:
@@ -211,17 +212,33 @@ async def _get_or_schedule_optimization(
     Returns:
         (result_data, None) if completed/cached, or (None, job_status_dict) if computing.
     """
-    # 1. Check disk cache
+    # 1. Check in-memory RAM cache
+    if target_date in _routes_cache_by_date:
+        return _routes_cache_by_date[target_date], None
+
+    # 2. Check per-date disk cache
+    date_file = DATA_OUTPUTS / f"routes_{target_date}.json"
+    if date_file.exists():
+        try:
+            with open(date_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+            _routes_cache_by_date[target_date] = cached
+            return cached, None
+        except Exception:
+            pass
+
+    # 3. Check fallback main routes_comparison.json
     if ROUTES_PATH.exists():
         try:
             with open(ROUTES_PATH, "r", encoding="utf-8") as f:
                 cached = json.load(f)
             if cached.get("date") == target_date:
+                _routes_cache_by_date[target_date] = cached
                 return cached, None
         except Exception:
             pass
 
-    # 2. Check if a background job is already in flight for this date (deduplication)
+    # 4. Check if a background job is already in flight for this date (deduplication)
     existing_task = _active_optimization_tasks.get(target_date)
     if existing_task and not existing_task.done():
         return None, {
@@ -230,12 +247,35 @@ async def _get_or_schedule_optimization(
             "message": "Optimization job is currently in progress off the event loop.",
         }
 
-    # 3. Schedule new optimization job off the event loop
+    # 5. Schedule new optimization job off the event loop
     loop = asyncio.get_running_loop()
 
     async def _worker():
         try:
-            return await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
+            res = await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
+            if res:
+                _routes_cache_by_date[target_date] = res
+                # Persist to per-date disk cache atomically (write tmp then rename)
+                try:
+                    import tempfile
+                    target_path = DATA_OUTPUTS / f"routes_{target_date}.json"
+                    DATA_OUTPUTS.mkdir(parents=True, exist_ok=True)
+                    fd, tmp_path = tempfile.mkstemp(
+                        suffix=".json", dir=str(DATA_OUTPUTS)
+                    )
+                    try:
+                        with os.fdopen(fd, "w", encoding="utf-8") as f:
+                            json.dump(res, f, indent=2)
+                        os.replace(tmp_path, str(target_path))
+                    except Exception:
+                        try:
+                            os.unlink(tmp_path)
+                        except OSError:
+                            pass
+                        raise
+                except Exception:
+                    pass
+            return res
         finally:
             _active_optimization_tasks.pop(target_date, None)
 

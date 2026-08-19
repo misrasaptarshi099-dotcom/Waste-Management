@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwachhRoute AI - Ward Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Satoshi:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ba1a1a",
+                        "tertiary": "#006858",
+                        "on-secondary-fixed-variant": "#2c4d3d",
+                        "surface-container-highest": "#ece0dd",
+                        "secondary": "#446554",
+                        "tertiary-container": "#008470",
+                        "surface-variant": "#ece0dd",
+                        "secondary-fixed": "#c6ebd5",
+                        "primary-fixed-dim": "#ffb4a5",
+                        "on-primary-container": "#fffbff",
+                        "on-secondary-fixed": "#002114",
+                        "on-primary-fixed-variant": "#7e2b1c",
+                        "on-background": "#201a18",
+                        "inverse-surface": "#352f2d",
+                        "tertiary-fixed": "#8bf6dc",
+                        "on-secondary-container": "#486a58",
+                        "surface-tint": "#9d4231",
+                        "outline": "#89726d",
+                        "on-primary-fixed": "#3f0300",
+                        "inverse-on-surface": "#faeeeb",
+                        "primary-container": "#b95745",
+                        "tertiary-fixed-dim": "#6ed9c1",
+                        "surface-sand": "#F5ECE3",
+                        "on-surface-variant": "#56423e",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#aacfba",
+                        "on-error-container": "#93000a",
+                        "background-cream": "#FDFBF7",
+                        "primary": "#9a402f",
+                        "secondary-container": "#c3e8d2",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#f2e6e2",
+                        "inverse-primary": "#ffb4a5",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#f4fffa",
+                        "primary-fixed": "#ffdad3",
+                        "surface-bright": "#fff8f6",
+                        "background": "#fff8f6",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f7ebe8",
+                        "surface": "#fff8f6",
+                        "surface-dim": "#e3d8d4",
+                        "surface-container-low": "#fdf1ed",
+                        "on-tertiary-fixed-variant": "#005144",
+                        "on-error": "#ffffff",
+                        "muted-taupe": "#8B7E76",
+                        "outline-variant": "#dcc0bb",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#201a18",
+                        "on-tertiary-fixed": "#00201a",
+                        "emerald-actual": "#10B981",
+                        "slate-baseline": "#64748B",
+                        "terracotta": "#C25E4B"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "organic": "60% 40% 30% 70% / 60% 30% 70% 40%",
+                        "organic-alt": "40% 60% 70% 30% / 40% 70% 30% 60%"
+                    },
+                    spacing: {
+                        "section-gap": "8rem",
+                        "interaction-radius": "24px",
+                        "page-margin": "5vw",
+                        "gutter": "2rem"
+                    },
+                    fontFamily: {
+                        "fraunces": ["Fraunces", "serif"],
+                        "jetbrains": ["JetBrains Mono", "monospace"],
+                        "satoshi": ["Satoshi", "sans-serif"],
+                        "headline-lg-mobile": ["notoSerif"],
+                        "label-md": ["dmSans"],
+                        "display-xl": ["notoSerif"],
+                        "body-lg": ["dmSans"],
+                        "headline-md": ["notoSerif"],
+                        "button": ["dmSans"],
+                        "display-lg": ["notoSerif"],
+                        "body-md": ["dmSans"],
+                        "headline-lg": ["notoSerif"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["32px", { "lineHeight": "120%", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "display-xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "400" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "130%", "fontWeight": "400" }],
+                        "button": ["16px", { "lineHeight": "100%", "fontWeight": "700" }],
+                        "display-lg": ["80px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "120%", "fontWeight": "400" }]
+                    },
+                    transitionTimingFunction: {
+                        'fluid': 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    },
+                    transitionDuration: {
+                        '800': '800ms',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background-cream');
+            color: theme('colors.on-background');
+            font-family: theme('fontFamily.satoshi');
+        }
+        
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .magnetic-area {
+            position: relative;
+        }
+        
+        /* Organic SVG Masking for future images */
+        .organic-mask {
+            clip-path: polygon(10% 0, 100% 10%, 90% 100%, 0 90%);
+            transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .organic-mask:hover {
+            clip-path: polygon(0 10%, 90% 0, 100% 90%, 10% 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<div class="grain-overlay"></div>
+<!-- TopNavBar: Desktop -->
+<nav aria-label="Main Navigation" class="hidden md:flex flex-col w-full top-0 px-page-margin py-4 bg-background-cream/80 backdrop-blur-md sticky z-40 transition-all duration-800 ease-fluid">
+<div class="flex justify-between items-center w-full max-w-full mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary font-bold tracking-tight">CivicFlow</span>
+</div>
+<div class="flex items-center gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 cursor-pointer font-button text-button" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 cursor-pointer font-button text-button" href="#">Logistics</a>
+<a aria-current="page" class="text-primary border-b-2 border-primary pb-1 transition-all duration-300 hover:opacity-80 cursor-pointer font-button text-button" href="#">Analytics</a>
+<a class="text-on-surface-variant hover:text-primary transition-all duration-300 hover:opacity-80 cursor-pointer font-button text-button" href="#">Reports</a>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-all duration-300">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+<button aria-label="Account" class="text-on-surface-variant hover:text-primary transition-all duration-300">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- TopNavBar: Mobile Header -->
+<header class="md:hidden flex justify-between items-center w-full px-page-margin py-4 bg-background-cream/80 backdrop-blur-md sticky top-0 z-40">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">CivicFlow</span>
+<button aria-label="Menu" class="text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+</header>
+<main class="px-page-margin pt-12 pb-32">
+<!-- Header Section -->
+<header class="mb-16">
+<h1 class="font-fraunces text-headline-lg md:text-display-lg text-on-background mb-4">Ward Performance</h1>
+<p class="font-satoshi text-body-lg text-on-surface-variant max-w-2xl">Real-time volumetric analysis and predictive flow across municipal sectors.</p>
+</header>
+<!-- Top Section: KPI Blocks -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-section-gap">
+<!-- Ward 03 -->
+<article class="bg-surface-sand rounded-3xl p-8 flex flex-col justify-between aspect-square md:aspect-auto md:h-64 transition-transform duration-800 ease-fluid hover:scale-[1.02] cursor-pointer group">
+<div class="flex justify-between items-start">
+<h2 class="font-fraunces text-headline-md text-on-background">Ward 03</h2>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">arrow_outward</span>
+</div>
+<div>
+<p class="font-satoshi text-label-md text-on-surface-variant uppercase tracking-widest mb-2">Avg Fill Capacity</p>
+<div class="flex items-baseline gap-2">
+<span class="font-jetbrains text-display-lg text-primary tracking-tighter">84</span>
+<span class="font-jetbrains text-headline-md text-primary">%</span>
+</div>
+</div>
+</article>
+<!-- Ward 04 -->
+<article class="bg-surface-sand rounded-3xl p-8 flex flex-col justify-between aspect-square md:aspect-auto md:h-64 transition-transform duration-800 ease-fluid hover:scale-[1.02] cursor-pointer group">
+<div class="flex justify-between items-start">
+<h2 class="font-fraunces text-headline-md text-on-background">Ward 04</h2>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">arrow_outward</span>
+</div>
+<div>
+<p class="font-satoshi text-label-md text-on-surface-variant uppercase tracking-widest mb-2">Avg Fill Capacity</p>
+<div class="flex items-baseline gap-2">
+<span class="font-jetbrains text-display-lg text-on-background tracking-tighter">62</span>
+<span class="font-jetbrains text-headline-md text-on-background">%</span>
+</div>
+</div>
+</article>
+<!-- Ward 01 -->
+<article class="bg-surface-sand rounded-3xl p-8 flex flex-col justify-between aspect-square md:aspect-auto md:h-64 transition-transform duration-800 ease-fluid hover:scale-[1.02] cursor-pointer group">
+<div class="flex justify-between items-start">
+<h2 class="font-fraunces text-headline-md text-on-background">Ward 01</h2>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">arrow_outward</span>
+</div>
+<div>
+<p class="font-satoshi text-label-md text-on-surface-variant uppercase tracking-widest mb-2">Avg Fill Capacity</p>
+<div class="flex items-baseline gap-2">
+<span class="font-jetbrains text-display-lg text-on-background tracking-tighter">45</span>
+<span class="font-jetbrains text-headline-md text-on-background">%</span>
+</div>
+</div>
+</article>
+</section>
+<!-- Middle & Right Section Layout (Sticky Editorial Pattern) -->
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Middle Section: Chart Area -->
+<section class="lg:w-2/3">
+<h2 class="font-fraunces text-headline-md text-on-background mb-8">Daily Waste Tonnage</h2>
+<div class="bg-surface-sand rounded-[2rem] p-8 md:p-12 h-[500px] relative overflow-hidden flex flex-col">
+<!-- Chart Legend -->
+<div class="flex gap-6 mb-8 z-10">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-emerald-actual"></div>
+<span class="font-satoshi text-label-md text-on-background">Actual Volume</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-slate-baseline"></div>
+<span class="font-satoshi text-label-md text-on-surface-variant">Baseline Projection</span>
+</div>
+</div>
+<!-- Faux SVG Chart (Stylized for 'Fluid Narrative') -->
+<div class="flex-grow relative w-full mt-4">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 800 300">
+<!-- Grid lines -->
+<line opacity="0.3" stroke="#dcc0bb" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="50" y2="50"></line>
+<line opacity="0.3" stroke="#dcc0bb" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="150" y2="150"></line>
+<line opacity="0.3" stroke="#dcc0bb" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="250" y2="250"></line>
+<!-- Baseline Path -->
+<path class="transition-all duration-800 ease-fluid" d="M0,200 C150,180 250,220 400,150 C550,80 650,120 800,100" fill="none" stroke="#8B7E76" stroke-dasharray="6 6" stroke-width="3"></path>
+<!-- Actual Path -->
+<path class="transition-all duration-800 ease-fluid" d="M0,220 C100,240 200,120 350,160 C450,180 550,40 650,80 C750,120 800,60 800,60" fill="none" stroke="#3A6953" stroke-linecap="round" stroke-width="4"></path>
+<!-- Area Fill under Actual -->
+<path d="M0,220 C100,240 200,120 350,160 C450,180 550,40 650,80 C750,120 800,60 800,60 L800,300 L0,300 Z" fill="url(#emeraldGradient)" opacity="0.1"></path>
+<defs>
+<lineargradient id="emeraldGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#3A6953"></stop>
+<stop offset="100%" stop-color="#FCF8F5" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</section>
+<!-- Right Sidebar: Hotspot Alerts -->
+<aside class="lg:w-1/3 flex flex-col">
+<div class="sticky top-32">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-fraunces text-headline-md text-on-background">Hotspot Alerts</h2>
+<span class="material-symbols-outlined text-terracotta">warning</span>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Alert Card 1 -->
+<div class="bg-surface-sand rounded-2xl p-6 transition-all duration-800 ease-fluid hover:bg-surface-container-high cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-satoshi text-body-lg text-on-background font-bold">FC Road Corridor</h3>
+<p class="font-satoshi text-label-md text-on-surface-variant mt-1">Bin Cluster Alpha</p>
+</div>
+<div class="bg-terracotta/10 text-terracotta px-3 py-1 rounded-full font-jetbrains text-label-md">Critical</div>
+</div>
+<div class="w-full bg-background-cream rounded-full h-2 mb-4 overflow-hidden">
+<div class="bg-terracotta h-full rounded-full w-[94%]"></div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-jetbrains text-body-md text-on-background">94% Filled</span>
+<span class="font-satoshi text-label-md text-terracotta flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 15m to overflow
+                                </span>
+</div>
+</div>
+<!-- Alert Card 2 -->
+<div class="bg-surface-sand rounded-2xl p-6 transition-all duration-800 ease-fluid hover:bg-surface-container-high cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-satoshi text-body-lg text-on-background font-bold">Kothrud Stand</h3>
+<p class="font-satoshi text-label-md text-on-surface-variant mt-1">Transit Node</p>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full font-jetbrains text-label-md">Warning</div>
+</div>
+<div class="w-full bg-background-cream rounded-full h-2 mb-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[82%]"></div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-jetbrains text-body-md text-on-background">82% Filled</span>
+<span class="font-satoshi text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 45m to overflow
+                                </span>
+</div>
+</div>
+<!-- Alert Card 3 -->
+<div class="bg-surface-sand rounded-2xl p-6 transition-all duration-800 ease-fluid hover:bg-surface-container-high cursor-pointer opacity-70">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-satoshi text-body-lg text-on-background font-bold">MG Road Market</h3>
+<p class="font-satoshi text-label-md text-on-surface-variant mt-1">Zone C</p>
+</div>
+</div>
+<div class="w-full bg-background-cream rounded-full h-2 mb-4 overflow-hidden">
+<div class="bg-tertiary-container h-full rounded-full w-[65%]"></div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-jetbrains text-body-md text-on-background">65% Filled</span>
+<span class="font-satoshi text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 2h remaining
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- BottomNavBar: Mobile Only -->
+<nav aria-label="Mobile Navigation" class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-center items-center pb-8 pointer-events-none">
+<div class="pointer-events-auto bg-surface-sand/90 dark:bg-surface-container/90 backdrop-blur-xl w-auto min-w-[320px] rounded-full px-6 py-3 shadow-lg flex justify-between items-center gap-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Command</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined text-[24px]">route</span>
+<span class="font-label-md text-label-md mt-1">Routes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-4 py-2 hover:scale-110 hover:text-primary transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+<span class="font-label-md text-label-md mt-1">Fleet</span>
+</a>
+<a aria-current="page" class="flex flex-col items-center justify-center bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container rounded-full px-5 py-2 scale-105 transition-all duration-[800ms]" href="#">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+<span class="font-label-md text-label-md mt-1">Alerts</span>
+</a>
+</div>
+</nav>
+<!-- Floating Simulation Scrubber -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-auto hidden md:flex">
+<div class="bg-surface-sand/90 backdrop-blur-xl rounded-full p-2 shadow-lg flex items-center gap-2 border border-outline-variant/30 transition-all duration-800 ease-fluid magnetic-area hover:scale-[1.02]">
+<button class="px-6 py-3 rounded-full bg-primary text-on-primary font-button text-button transition-colors duration-300">
+                Normal
+            </button>
+<button class="px-6 py-3 rounded-full text-on-surface-variant hover:text-primary font-button text-button transition-colors duration-300">
+                Ganesh Utsav Surge
+            </button>
+</div>
+</div>
+</body></html>

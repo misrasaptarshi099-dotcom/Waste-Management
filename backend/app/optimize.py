@@ -572,11 +572,35 @@ def run_full_city_optimization(date_str: str) -> dict:
         "overflow_dynamic_missed": 0,
     }
 
-    for zone_id in sorted(zones.keys()):
-        print(f"[OPTIMIZE] Solving CVRP for {zone_id} ({zones[zone_id]['name']})...")
-        result = run_zone_optimization(zone_id, date_str, predicted_fills, all_stops)
-        zone_results[zone_id] = result
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
+    if not zones:
+        # No zones loaded — return valid zero-ward result directly
+        city_savings = compute_savings_deltas(0.0, 0.0, 0, 0, 0, 0)
+        output = {
+            "date": date_str,
+            "city": "Pune (PMC)",
+            "total_wards_optimized": 0,
+            "city_savings": city_savings,
+            "ward_results": {},
+        }
+        DATA_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+        with open(ROUTES_OUTPUT_PATH, "w", encoding="utf-8") as f:
+            json.dump(output, f, indent=2, default=str)
+        return output
+
+    def _solve_single_zone(zone_id):
+        return zone_id, run_zone_optimization(zone_id, date_str, predicted_fills, all_stops)
+
+    with ThreadPoolExecutor(max_workers=min(len(zones), 8)) as executor:
+        futures = [executor.submit(_solve_single_zone, zid) for zid in sorted(zones.keys())]
+        for future in as_completed(futures):
+            zone_id, result = future.result()
+            zone_results[zone_id] = result
+
+    # Sort zone_results by zone_id and aggregate
+    for zone_id in sorted(zone_results.keys()):
+        result = zone_results[zone_id]
         if "savings" in result:
             s = result["savings"]
             city_totals["static_distance_km"] += s["static_distance_km"]
