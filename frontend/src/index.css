@@ -4,97 +4,88 @@
 
 @layer base {
   body {
-    @apply bg-canvas text-slate-100 font-body overflow-x-hidden;
+    background-color: #FDFBF7;
+    color: #201A18;
+    font-family: 'DM Sans', 'Satoshi', sans-serif;
+    overflow-x: hidden;
   }
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* 4% Grain Overlay matching Stitch Fluid Narrative */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+/* Organic Shapes & Masking */
+.rounded-organic {
+  border-radius: 60% 40% 50% 50% / 40% 50% 50% 60%;
+  transition: border-radius 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms ease;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
-  border-radius: 9999px;
+.rounded-organic:hover {
+  border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.5);
+.rounded-organic-alt {
+  border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+  transition: border-radius 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms ease;
 }
 
-/* Leaflet Container overrides */
+.rounded-organic-alt:hover {
+  border-radius: 60% 40% 30% 70% / 40% 50% 60% 50%;
+}
+
+.organic-transition {
+  transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Leaflet Container overrides for Light Editorial Theme */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background: #030712 !important;
-  font-family: 'Satoshi', sans-serif !important;
-}
-
-.leaflet-tile {
-  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+  background: #F5ECE3 !important;
+  font-family: 'DM Sans', 'Satoshi', sans-serif !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: #0F172A !important;
-  color: #F8FAFC !important;
-  border: 1px solid #1E293B !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+  background: #FDFBF7 !important;
+  color: #201A18 !important;
+  border: 1px solid #DCC0BB !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px -5px rgba(139, 126, 118, 0.2) !important;
   padding: 4px !important;
 }
 
 .leaflet-popup-tip {
-  background: #0F172A !important;
-  border: 1px solid #1E293B !important;
+  background: #FDFBF7 !important;
+  border: 1px solid #DCC0BB !important;
 }
 
-/* Pulsing aura for overflowing bin nodes */
-@keyframes ping-slow {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
+/* Subtle glow for overflowing bins — NO transform:scale to avoid marker jumping */
+@keyframes glow-terracotta {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(194, 94, 75, 0);
   }
-  70% {
-    transform: scale(1.15);
-    box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  50% {
+    box-shadow: 0 0 6px 3px rgba(194, 94, 75, 0.45);
   }
 }
 
 .pulse-critical {
-  animation: ping-slow 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation: glow-terracotta 2.5s ease-in-out infinite;
 }
 
-@keyframes ping-amber {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-  }
-  70% {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-  }
-}
-
-.pulse-amber {
-  animation: ping-amber 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-/* Polyline dash animation */
-.animated-dash-polyline {
-  stroke-dasharray: 6, 12;
+/* Animated Dashed Polyline for Static Baseline */
+.path-static {
+  stroke-dasharray: 6, 8;
   animation: dash 35s linear infinite;
 }
 
@@ -104,15 +95,3 @@
   }
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
-}
-
-.glass-panel-sand {
-  background: rgba(245, 236, 227, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(220, 192, 187, 0.6);
-}

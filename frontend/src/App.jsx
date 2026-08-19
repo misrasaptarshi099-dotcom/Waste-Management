@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/CommandCenter/Header';
-import KpiPanel from './components/CommandCenter/KpiPanel';
 import MapView from './components/CommandCenter/MapView';
-import SimulationScrubber from './components/CommandCenter/SimulationScrubber';
 import WardAnalytics from './components/CommandCenter/WardAnalytics';
 import FleetLogistics from './components/CommandCenter/FleetLogistics';
 import CitizenApp from './components/CitizenPortal/CitizenApp';
@@ -14,13 +13,13 @@ import {
   fetchRoutesComparison, 
   fetchSavings 
 } from './api/client';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('gis'); // 'gis' | 'analytics' | 'fleet' | 'citizen'
+/* ─── Municipal Command Center Shell (Government Dashboard) ─── */
+function CommandCenter() {
+  const [activeTab, setActiveTab] = useState('gis');
   const [currentDate, setCurrentDate] = useState('2026-08-20');
   const [selectedZone, setSelectedZone] = useState('ALL');
-  const [filterUrgency, setFilterUrgency] = useState('ALL');
   
   const [health, setHealth] = useState(null);
   const [zones, setZones] = useState(null);
@@ -30,9 +29,15 @@ export default function App() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false);
+  const [dispatchPayload, setDispatchPayload] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Initial load: health & zones
+  const handleOpenDispatchModal = (payload) => {
+    setDispatchPayload(payload || null);
+    setIsDispatchModalOpen(true);
+  };
+
+  // Initial load
   useEffect(() => {
     async function initData() {
       try {
@@ -49,7 +54,7 @@ export default function App() {
     initData();
   }, []);
 
-  // Fetch date-specific data on date change
+  // Date-specific data fetch
   useEffect(() => {
     let isCancelled = false;
 
@@ -71,12 +76,10 @@ export default function App() {
       } catch (err) {
         if (!isCancelled) {
           console.error('[App] Failed to fetch date data:', err.message);
-          setErrorMessage(`API synchronization error: ${err.message}`);
+          setErrorMessage(`API sync: ${err.message}`);
         }
       } finally {
-        if (!isCancelled) {
-          setIsLoading(false);
-        }
+        if (!isCancelled) setIsLoading(false);
       }
     }
 
@@ -85,27 +88,24 @@ export default function App() {
   }, [currentDate]);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col font-body antialiased">
-      {/* Top Header */}
+    <div className="min-h-screen bg-background-cream text-on-background flex flex-col font-body antialiased selection:bg-surface-sand selection:text-primary relative">
+      <div className="grain-overlay"></div>
+
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         healthStatus={health}
       />
 
-      {/* Main View Router */}
-      <main className="flex-1 w-full max-w-[1680px] mx-auto p-4 md:p-6 flex flex-col gap-6">
-        {/* Error Notification Banner */}
+      <main className="flex-1 w-full px-4 md:px-12 py-4 flex flex-col gap-6">
         {errorMessage && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-400" />
+          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-3 text-xs text-primary flex items-center gap-2 max-w-xl mx-auto">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-primary" />
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {activeTab === 'citizen' ? (
-          <CitizenApp />
-        ) : activeTab === 'analytics' ? (
+        {activeTab === 'analytics' ? (
           <WardAnalytics
             routesData={routes}
             zonesData={zones}
@@ -118,47 +118,45 @@ export default function App() {
           <FleetLogistics
             routesData={routes}
             selectedZone={selectedZone}
+            onDispatchFleet={() => handleOpenDispatchModal(null)}
           />
         ) : (
-          /* Command Center (GIS) Main View */
-          <div className="flex flex-col gap-6">
-            {/* Top Telemetry KPI Cards */}
-            <KpiPanel
-              savings={savings}
-              isLoading={isLoading}
-            />
-
-            {/* Middle Section: GIS Map + Quick Controls */}
-            <div className="grid grid-cols-1 gap-6">
-              <MapView
-                zonesData={zones}
-                stopsData={stops}
-                routesData={routes}
-                selectedZone={selectedZone}
-                onSelectZone={setSelectedZone}
-                filterUrgency={filterUrgency}
-                setFilterUrgency={setFilterUrgency}
-              />
-            </div>
-
-            {/* Bottom Section: Simulation Scrubber & Event Trigger */}
-            <SimulationScrubber
-              currentDate={currentDate}
-              onDateChange={setCurrentDate}
-              isLoading={isLoading}
-              onDispatchFleet={() => setIsDispatchModalOpen(true)}
-            />
-          </div>
+          <MapView
+            zonesData={zones}
+            stopsData={stops}
+            routesData={routes}
+            savings={savings}
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            isLoading={isLoading}
+            onDispatchFleet={handleOpenDispatchModal}
+          />
         )}
       </main>
 
-      {/* Fleet Dispatch Modal */}
       <DispatchModal
         isOpen={isDispatchModalOpen}
-        onClose={() => setIsDispatchModalOpen(false)}
+        onClose={() => {
+          setIsDispatchModalOpen(false);
+          setDispatchPayload(null);
+        }}
         routesData={routes}
         currentDate={currentDate}
+        dispatchPayload={dispatchPayload}
       />
     </div>
+  );
+}
+
+/* ─── Root App: Route-Level Separation ─── */
+export default function App() {
+  return (
+    <Routes>
+      {/* Citizen PWA at /citizen — completely standalone, own layout */}
+      <Route path="/citizen" element={<CitizenApp />} />
+
+      {/* Municipal Command Center at / — government dashboard */}
+      <Route path="/*" element={<CommandCenter />} />
+    </Routes>
   );
 }

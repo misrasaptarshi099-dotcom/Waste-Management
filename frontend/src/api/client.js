@@ -32,20 +32,34 @@ export async function fetchStops(dateStr) {
 
 export async function fetchRoutesComparison(dateStr) {
   const url = dateStr ? `${API_BASE}/api/routes/comparison?date=${dateStr}` : `${API_BASE}/api/routes/comparison`;
-  const res = await fetch(url);
-  if (res.status === 202) {
-    const statusData = await res.json();
-    return { isJobInProgress: true, ...statusData };
+  let attempts = 0;
+  while (attempts < 12) {
+    const res = await fetch(url);
+    if (res.status === 202) {
+      attempts++;
+      await new Promise(r => setTimeout(r, 600));
+      continue;
+    }
+    if (!res.ok) throw new Error(`Failed to fetch routes: HTTP ${res.status}`);
+    return await res.json();
   }
-  if (!res.ok) throw new Error(`Failed to fetch routes: HTTP ${res.status}`);
-  return await res.json();
+  throw new Error('Route optimization job timed out.');
 }
 
 export async function fetchSavings(dateStr) {
   const url = dateStr ? `${API_BASE}/api/stats/savings?date=${dateStr}` : `${API_BASE}/api/stats/savings`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch savings: HTTP ${res.status}`);
-  return await res.json();
+  let attempts = 0;
+  while (attempts < 12) {
+    const res = await fetch(url);
+    if (res.status === 202) {
+      attempts++;
+      await new Promise(r => setTimeout(r, 600));
+      continue;
+    }
+    if (!res.ok) throw new Error(`Failed to fetch savings: HTTP ${res.status}`);
+    return await res.json();
+  }
+  throw new Error('Savings calculation timed out.');
 }
 
 export async function fetchCitizenLookup(zoneId) {

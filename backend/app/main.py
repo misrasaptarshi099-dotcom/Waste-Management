@@ -192,7 +192,8 @@ async def get_stops(
 # ---------------------------------------------------------------------------
 
 _active_optimization_tasks: dict[str, asyncio.Task] = {}
-_executor = ThreadPoolExecutor(max_workers=2)
+_routes_cache_by_date: dict[str, dict] = {}
+_executor = ThreadPoolExecutor(max_workers=4)
 
 
 def _run_optimization_sync(target_date: str) -> dict:
@@ -211,17 +212,22 @@ async def _get_or_schedule_optimization(
     Returns:
         (result_data, None) if completed/cached, or (None, job_status_dict) if computing.
     """
-    # 1. Check disk cache
+    # 1. Check in-memory RAM cache
+    if target_date in _routes_cache_by_date:
+        return _routes_cache_by_date[target_date], None
+
+    # 2. Check disk cache
     if ROUTES_PATH.exists():
         try:
             with open(ROUTES_PATH, "r", encoding="utf-8") as f:
                 cached = json.load(f)
             if cached.get("date") == target_date:
+                _routes_cache_by_date[target_date] = cached
                 return cached, None
         except Exception:
             pass
 
-    # 2. Check if a background job is already in flight for this date (deduplication)
+    # 3. Check if a background job is already in flight for this date (deduplication)
     existing_task = _active_optimization_tasks.get(target_date)
     if existing_task and not existing_task.done():
         return None, {
@@ -230,12 +236,15 @@ async def _get_or_schedule_optimization(
             "message": "Optimization job is currently in progress off the event loop.",
         }
 
-    # 3. Schedule new optimization job off the event loop
+    # 4. Schedule new optimization job off the event loop
     loop = asyncio.get_running_loop()
 
     async def _worker():
         try:
-            return await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
+            res = await loop.run_in_executor(_executor, _run_optimization_sync, target_date)
+            if res:
+                _routes_cache_by_date[target_date] = res
+            return res
         finally:
             _active_optimization_tasks.pop(target_date, None)
 
