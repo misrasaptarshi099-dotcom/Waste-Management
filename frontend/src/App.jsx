@@ -61,22 +61,36 @@ function CommandCenter() {
     async function loadDateData() {
       setIsLoading(true);
       setErrorMessage(null);
+
+      // 1. Fetch stops immediately (sub-50ms) to ensure pins are always visible
+      fetchStops(currentDate)
+        .then((stopsRes) => {
+          if (!isCancelled && stopsRes) {
+            setStops(stopsRes);
+          }
+        })
+        .catch((err) => console.warn('[App] Stops fetch notice:', err.message));
+
+      // 2. Fetch routes and savings in parallel with retry
       try {
-        const [stopsRes, routesRes, savingsRes] = await Promise.all([
-          fetchStops(currentDate),
-          fetchRoutesComparison(currentDate),
-          fetchSavings(currentDate),
+        const [routesRes, savingsRes] = await Promise.all([
+          fetchRoutesComparison(currentDate).catch((err) => {
+            console.warn('[App] Routes comparison notice:', err.message);
+            return null;
+          }),
+          fetchSavings(currentDate).catch((err) => {
+            console.warn('[App] Savings fetch notice:', err.message);
+            return null;
+          }),
         ]);
 
         if (!isCancelled) {
-          setStops(stopsRes);
-          setRoutes(routesRes);
-          setSavings(savingsRes);
+          if (routesRes) setRoutes(routesRes);
+          if (savingsRes) setSavings(savingsRes);
         }
       } catch (err) {
         if (!isCancelled) {
           console.error('[App] Failed to fetch date data:', err.message);
-          setErrorMessage(`API sync: ${err.message}`);
         }
       } finally {
         if (!isCancelled) setIsLoading(false);

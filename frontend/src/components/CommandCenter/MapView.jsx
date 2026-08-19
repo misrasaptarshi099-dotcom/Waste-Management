@@ -230,10 +230,13 @@ export default function MapView({
     };
   }, [selectedWards, routesData]);
 
-  // Filter stops by selected wards
+  // Filter stops by selected wards (handles both array and {stops: []} format)
   const visibleStops = useMemo(() => {
-    if (!stopsData || !stopsData.stops) return [];
-    return stopsData.stops.filter(s => selectedWards.includes(s.zone_id));
+    if (!stopsData) return [];
+    const list = Array.isArray(stopsData) ? stopsData : (stopsData.stops || []);
+    if (!list || list.length === 0) return [];
+    if (!selectedWards || selectedWards.length === 0) return list;
+    return list.filter(s => selectedWards.includes(s.zone_id));
   }, [stopsData, selectedWards]);
 
   // Extract polylines from route data for selected wards
